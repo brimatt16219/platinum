@@ -1,0 +1,11 @@
+// Deliberately wrong. `plat check` must report PT1101 listing `GBP` as missing,
+// with a fix plan inserting `GBP => ...`.
+
+type Currency = USD | EUR | GBP
+
+fn symbol(c: Currency) -> String {
+  match c {
+    USD => "$",
+    EUR => "€",
+  }
+}

@@ -1,0 +1,48 @@
+// Verification showcase: everything here is proven by `plat prove` with Z3.
+
+type Account = { id: Int, balance: Int where self >= 0, open?: Bool }
+
+pub fn deposit(acct: Account, amt: Int where self > 0) -> Account
+  requires acct.open?
+  ensures result.balance == acct.balance + amt
+{
+  Account { ..acct, balance: acct.balance + amt }
+}
+
+pub fn withdraw(acct: Account, amt: Int where self > 0) -> Result[Account, Closed | Insufficient]
+  ensures result.ok? => result.unwrap.balance == acct.balance - amt
+{
+  if !acct.open? { return Err(Closed) }
+  if amt > acct.balance { return Err(Insufficient) }
+  // obligation: acct.balance - amt >= 0 (field refinement). Holds because the
+  // branch above was not taken, so amt <= acct.balance.
+  Ok(Account { ..acct, balance: acct.balance - amt })
+}
+
+/// Money is neither created nor destroyed by a transfer.
+pub fn transfer(from: Account, to: Account, amt: Int where self > 0)
+  -> Result[(Account, Account), Closed | Insufficient]
+  requires to.open?
+  ensures result.ok? =>
+    result.unwrap.0.balance + result.unwrap.1.balance == from.balance + to.balance
+{
+  let f = withdraw(from, amt)?
+  let t = deposit(to, amt)
+  Ok((f, t))
+}
+
+/// Loop with invariants. Indexing `accts[i]` is proven in bounds.
+pub fn total_balance(accts: List[Account]) -> Int
+  ensures result >= 0
+{
+  var sum = 0
+  var i = 0
+  while i < accts.len
+    invariant i >= 0
+    invariant sum >= 0
+  {
+    sum += accts[i].balance
+    i += 1
+  }
+  sum
+}

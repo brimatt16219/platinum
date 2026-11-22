@@ -1,0 +1,6 @@
+// Deliberately wrong. `plat check` must report PT2001: `greet` is pub and uses
+// Console without declaring it. Fix plan: add `needs Console`.
+
+pub fn greet(name: String) {
+  puts("hi #{name}")
+}

@@ -1,0 +1,19 @@
+// Structured concurrency (M7). Tasks cannot outlive their scope.
+
+type User = { id: Int, name: String }
+type Feed = { items: List[String] }
+type Dashboard = { user: User, feed: Feed }
+
+cap Db { fn find_user(id: Int) -> Result[User, NotFound] }
+cap Http { fn get_feed(id: Int) -> Result[Feed, Timeout(after: Int)] }
+
+pub fn load_dashboard(id: Int) -> Result[Dashboard, NotFound | Timeout(after: Int)]
+  needs Async, Db, Http
+{
+  scope {
+    let user = spawn Db.find_user(id)
+    let feed = spawn Http.get_feed(id)
+    // both run concurrently; leaving the scope joins them
+    Ok(Dashboard { user: user.await?, feed: feed.await? })
+  }
+}

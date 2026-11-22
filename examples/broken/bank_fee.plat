@@ -1,0 +1,11 @@
+// Deliberately wrong. `plat prove` must report PT3001 with a counterexample
+// (acct.balance = 5, amt = 5) and a fix plan suggesting `amt + FEE > acct.balance`.
+
+const FEE: Int = 1
+
+type Account = { id: Int, balance: Int where self >= 0, open?: Bool }
+
+pub fn withdraw_with_fee(acct: Account, amt: Int where self > 0) -> Result[Account, Insufficient] {
+  if amt > acct.balance { return Err(Insufficient) }
+  Ok(Account { ..acct, balance: acct.balance - amt - FEE })
+}

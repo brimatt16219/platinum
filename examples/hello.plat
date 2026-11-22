@@ -1,0 +1,5 @@
+// The smallest Platinum program. `main` declares the capabilities it uses.
+fn main() needs Console {
+  let name = "Platinum"
+  puts("Hello from #{name}!")
+}
