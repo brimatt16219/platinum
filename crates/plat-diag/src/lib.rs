@@ -27,7 +27,7 @@ pub mod source;
 pub mod span;
 
 pub use bag::DiagnosticBag;
-pub use codes::Code;
+pub use codes::{Code, CodeInfo, ParseCodeError};
 pub use diagnostic::{Applicability, Diagnostic, Edit, Fix, Label, Severity};
 pub use source::{FileTooLarge, LineCol, SourceFile, SourceMap};
 pub use span::{FileId, Span};
