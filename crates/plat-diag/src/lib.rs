@@ -19,3 +19,9 @@
 //! - step 3: `Diagnostic`, `Label`, `Fix`, `DiagnosticBag`
 //! - step 4: the codes registry used by `plat explain`
 //! - step 5: JSON and human (ariadne) renderers
+
+pub mod source;
+pub mod span;
+
+pub use source::{FileTooLarge, LineCol, SourceFile, SourceMap};
+pub use span::{FileId, Span};
