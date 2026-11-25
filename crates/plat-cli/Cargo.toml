@@ -1,0 +1,15 @@
+[package]
+name = "plat-cli"
+description = "The `plat` command-line tool"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# The crate is named plat-cli, but the binary users type is `plat`.
+[[bin]]
+name = "plat"
+path = "src/main.rs"
+
+[dependencies]
+# plat-diag and plat-syntax are added in step 11, with the real subcommands.

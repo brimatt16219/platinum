@@ -1,0 +1,9 @@
+[package]
+name = "plat-diag"
+description = "Diagnostics for the Platinum compiler: spans, codes, JSON and human rendering, fix plans"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]

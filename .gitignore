@@ -1,0 +1,15 @@
+# Rust build output
+/target/
+
+# insta writes pending snapshots here until they are reviewed
+*.snap.new
+*.pending-snap
+
+# Editor and OS clutter
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Claude Code local settings (may contain machine-specific permissions)
+.claude/settings.local.json

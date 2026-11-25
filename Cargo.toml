@@ -1,0 +1,23 @@
+# Platinum Cargo workspace.
+#
+# A workspace is a set of crates (Rust packages) that share one Cargo.lock and
+# one target/ build directory. Each compiler phase lives in its own crate so the
+# dependency direction stays honest: plat-syntax may use plat-diag, but never
+# the other way around. Crates are added milestone by milestone (see ROADMAP.md).
+
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+# Shared metadata that member crates opt into with `field.workspace = true`.
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# Versions for third-party crates are pinned here once, then members write
+# `serde.workspace = true`. Entries (including our own crates, as path
+# dependencies) are added in the step that first uses them; cargo warns about
+# unused ones.
+[workspace.dependencies]
