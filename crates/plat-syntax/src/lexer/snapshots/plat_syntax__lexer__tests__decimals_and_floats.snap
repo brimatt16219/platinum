@@ -1,0 +1,14 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"1.50 0.1 1_000.00 1.5f 2.0e-3f 6.02e23f 1e5f 1f 3E+2f\")"
+---
+Decimal                            0..4   "1.50"
+Decimal                            5..8   "0.1"
+Decimal                            9..17  "1_000.00"
+Float                             18..22  "1.5f"
+Float                             23..30  "2.0e-3f"
+Float                             31..39  "6.02e23f"
+Float                             40..44  "1e5f"
+Float                             45..47  "1f"
+Float                             48..53  "3E+2f"
+Eof                               53..53  ""

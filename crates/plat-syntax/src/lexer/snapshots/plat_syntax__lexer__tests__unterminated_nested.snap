@@ -1,0 +1,7 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"a /* outer /* inner */\")"
+---
+LowerIdent                         0..1   "a"
+Eof                               22..22  ""
+PT0003 2..4 unterminated block comment

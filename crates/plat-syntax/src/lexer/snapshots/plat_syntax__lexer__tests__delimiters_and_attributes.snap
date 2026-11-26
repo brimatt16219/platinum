@@ -1,0 +1,17 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"( ) [ ] { } #[derive(Eq)]\")"
+---
+LParen                             0..1   "("
+RParen                             2..3   ")"
+LBracket                           4..5   "["
+RBracket                           6..7   "]"
+LBrace                             8..9   "{"
+RBrace                            10..11  "}"
+HashBracket                       12..14  "#["
+LowerIdent                        14..20  "derive"
+LParen                            20..21  "("
+UpperIdent                        21..23  "Eq"
+RParen                            23..24  ")"
+RBracket                          24..25  "]"
+Eof                               25..25  ""

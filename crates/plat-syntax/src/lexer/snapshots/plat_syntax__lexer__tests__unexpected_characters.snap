@@ -1,0 +1,30 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"let price = $5\\nx @@ y\\n&\\n#\\nlet s = \\u{201C}hi\\u{201D}\\ncafé\")"
+---
+Kw(Let)                            0..3   "let"
+LowerIdent                         4..9   "price"
+Eq                                10..11  "="
+Error                             12..13  "$"
+Int { suffix: None }              13..14  "5"
+LowerIdent                        15..16  "x"
+Error                             17..19  "@@"
+LowerIdent                        20..21  "y"
+Error                             22..23  "&"
+Error                             24..25  "#"
+Kw(Let)                           26..29  "let"
+LowerIdent                        30..31  "s"
+Eq                                32..33  "="
+Error                             34..37  "“"
+LowerIdent                        37..39  "hi"
+Error                             39..42  "”"
+LowerIdent                        43..46  "caf"
+Error                             46..48  "é"
+Eof                               48..48  ""
+PT0001 12..13 unexpected character `$`
+PT0001 17..19 unexpected characters `@@`
+PT0001 22..23 unexpected character `&`
+PT0001 24..25 unexpected character `#`
+PT0001 34..37 unexpected character `“`
+PT0001 39..42 unexpected character `”`
+PT0001 46..48 unexpected character `é`

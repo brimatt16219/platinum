@@ -1,0 +1,21 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"fn refund let var total _ _tmp x1 Money Some HTTP2 self result true false pubx\")"
+---
+Kw(Fn)                             0..2   "fn"
+LowerIdent                         3..9   "refund"
+Kw(Let)                           10..13  "let"
+Kw(Var)                           14..17  "var"
+LowerIdent                        18..23  "total"
+LowerIdent                        24..25  "_"
+LowerIdent                        26..30  "_tmp"
+LowerIdent                        31..33  "x1"
+UpperIdent                        34..39  "Money"
+UpperIdent                        40..44  "Some"
+UpperIdent                        45..50  "HTTP2"
+Kw(SelfValue)                     51..55  "self"
+Kw(Result)                        56..62  "result"
+Kw(True)                          63..67  "true"
+Kw(False)                         68..73  "false"
+LowerIdent                        74..78  "pubx"
+Eof                               78..78  ""

@@ -1,0 +1,7 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"a /* never closed\")"
+---
+LowerIdent                         0..1   "a"
+Eof                               17..17  ""
+PT0003 2..4 unterminated block comment

@@ -1,0 +1,14 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"let yield = async + decreases\")"
+---
+Kw(Let)                            0..3   "let"
+LowerIdent                         4..9   "yield"
+Eq                                10..11  "="
+LowerIdent                        12..17  "async"
+Plus                              18..19  "+"
+LowerIdent                        20..29  "decreases"
+Eof                               29..29  ""
+PT0008 4..9 `yield` is reserved for future use
+PT0008 12..17 `async` is reserved for future use
+PT0008 20..29 `decreases` is reserved for future use

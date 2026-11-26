@@ -1,0 +1,9 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"a // line comment\\n/// doc comment\\n//// not doc\\nb /* block /* nested */ still */ c\")"
+---
+LowerIdent                         0..1   "a"
+DocComment                        18..33  "/// doc comment"
+LowerIdent                        47..48  "b"
+LowerIdent                        80..81  "c"
+Eof                               81..81  ""

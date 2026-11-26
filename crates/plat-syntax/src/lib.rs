@@ -20,6 +20,8 @@
 //! (see `plat-diag`) and processing continues, so one run can report many
 //! errors.
 
+pub mod lexer;
 pub mod token;
 
+pub use lexer::{Lexed, lex};
 pub use token::{IntSuffix, Keyword, Quote, Token, TokenKind};

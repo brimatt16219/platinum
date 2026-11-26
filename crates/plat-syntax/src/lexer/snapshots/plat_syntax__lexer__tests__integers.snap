@@ -1,0 +1,12 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"0 42 1_000_000 0xFF 0xdead_beef 0b1010 007\")"
+---
+Int { suffix: None }               0..1   "0"
+Int { suffix: None }               2..4   "42"
+Int { suffix: None }               5..14  "1_000_000"
+Int { suffix: None }              15..19  "0xFF"
+Int { suffix: None }              20..31  "0xdead_beef"
+Int { suffix: None }              32..38  "0b1010"
+Int { suffix: None }              39..42  "007"
+Eof                               42..42  ""

@@ -8,3 +8,6 @@ publish.workspace = true
 
 [dependencies]
 plat-diag.workspace = true
+
+[dev-dependencies]
+insta.workspace = true

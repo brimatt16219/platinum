@@ -1,0 +1,15 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+expression: "dump(\"42i8 7i16 7i32 42i64 255u8 1u16 1u32 1u64 0xFFu8 0b1i8\")"
+---
+Int { suffix: Some(I8) }           0..4   "42i8"
+Int { suffix: Some(I16) }          5..9   "7i16"
+Int { suffix: Some(I32) }         10..14  "7i32"
+Int { suffix: Some(I64) }         15..20  "42i64"
+Int { suffix: Some(U8) }          21..26  "255u8"
+Int { suffix: Some(U16) }         27..31  "1u16"
+Int { suffix: Some(U32) }         32..36  "1u32"
+Int { suffix: Some(U64) }         37..41  "1u64"
+Int { suffix: Some(U8) }          42..48  "0xFFu8"
+Int { suffix: Some(I8) }          49..54  "0b1i8"
+Eof                               54..54  ""
