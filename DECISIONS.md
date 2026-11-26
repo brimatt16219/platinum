@@ -86,7 +86,7 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 **Why:** lets a code's number say which phase produced it; consistent with the existing `PT0110`.
 
 ## D-21: Newline rule amendments: `|` and `->` continue a line; newlines are insignificant in item headers
-**Status:** proposed (M0 step 6). Amends D-17.
+**Status:** accepted (2026-11-26, proposed in M0 step 6). Amends D-17.
 **Problem:** D-17 as written breaks the spec's own examples.
 1. Multi-line variant declarations (`spec/03-types.md`, `examples/shapes.plat`) start continuation lines with `|`: after `| Circle(radius: Float)` the line ends in `)`, so D-17 would end the statement before `| Rect(...)`.
 2. `examples/bank.plat` (`transfer`) puts `-> Result[...]` on its own line after `)`.

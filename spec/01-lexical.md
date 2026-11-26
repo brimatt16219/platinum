@@ -68,7 +68,7 @@ String escapes: `\n \t \r \\ \" \# \u{1F600}`. Interpolation `#{expr}` requires 
 
 ## Statement termination
 
-A newline ends a statement when the line could syntactically end there and the next line does not begin with a binary operator, `.`, `|>`, or `?`. This permits Ruby-style leading-dot chains:
+A newline ends a statement when the line could syntactically end there and the next line does not begin with a binary operator, `.`, `|>`, `?`, `|`, or `->`. This permits Ruby-style leading-dot chains, multi-line variant declarations (`| Circle(...)` on each line), and return types on their own line:
 
 ```platinum
 let total = invoices
@@ -79,6 +79,8 @@ let total = invoices
 
 Semicolons may separate statements on one line.
 
-Implementation (DECISIONS D-17): the lexer owns this rule. It emits a `Newline` token only when the previous token can end a statement (an identifier, literal, `)`, `]`, `}`, `?`, or one of `return break continue self result true false`) and the next non-blank token is not a binary operator, `.`, `|>`, or `?`. Newlines inside `( )` and `[ ]` are never significant, so argument lists and list literals may span lines freely.
+Implementation (DECISIONS D-17): the lexer owns this rule. It emits a `Newline` token only when the previous token can end a statement (an identifier, literal, `)`, `]`, `}`, `?`, or one of `return break continue self result true false`) and the next non-blank token is not a binary operator, `.`, `|>`, `?`, `|`, or `->` (`|` and `->` added by D-21). Newlines inside `( )` and `[ ]` are never significant, so argument lists and list literals may span lines freely.
+
+The parser additionally ignores `Newline` tokens inside item headers (DECISIONS D-21): between `fn` and the opening `{` of its body (so `needs`, `requires`, `ensures`, and the `{` itself may each start a line), in `while`/`for` heads before the loop body (so `invariant` clauses may each start a line), and around `=` in `type` declarations. A statement cannot end in those positions, so this never changes meaning. `{` is deliberately *not* a lexer continuation token: `foo()` followed by `{ ... }` on the next line stays two statements rather than becoming a trailing-block call.
 
 String interpolation (DECISIONS D-18) is lexed as a token stream: `"a #{x} b"` becomes `StrStart("a ")`, `InterpStart`, the tokens of `x`, `InterpEnd`, `StrEnd(" b")`.
