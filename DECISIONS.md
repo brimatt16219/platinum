@@ -98,7 +98,7 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 **Why:** (a) is a pure lexer fix that the examples require. (b) keeps the lexer rule simple (Go style) while allowing the brace-on-its-own-line layout the examples use, and limits newline tolerance to places where it cannot change meaning.
 
 ## D-22: Number literal details
-**Status:** proposed (M0 step 7). Clarifies `spec/01-lexical.md`, which lists literal forms by example but leaves edge cases open.
+**Status:** accepted (2026-11-26, proposed in M0 step 7). Clarifies `spec/01-lexical.md`, which lists literal forms by example but leaves edge cases open.
 **Choice:**
 1. `_` must sit between two digits: `1_000` is valid; `1_`, `1__0`, `0x_FF`, `1.5_` are `PT0005`.
 2. An exponent (`e3`, `e-3`, `E+3`) is only allowed on a `Float`, so it needs the `f` suffix: `2.0e-3f`, `1e5f`. `1e5` is `PT0005` (Decimal literals are written out in full).

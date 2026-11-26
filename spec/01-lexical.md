@@ -51,6 +51,15 @@ Reserved for future use: `async`, `decreases`, `macro`, `unsafe`, `yield`.
 
 **Important:** a number with a decimal point and no `f` suffix is a `Decimal`. This is deliberate: money and other human quantities should never be floats by accident.
 
+Number literal rules (DECISIONS D-22):
+
+- `_` separates digits and must sit between two digits: `1_000` is valid; `1_`, `1__0`, `0x_FF`, `1.5_` are errors (`PT0005`).
+- An exponent (`e3`, `e-3`, `E+3`) is only allowed on a `Float`, so it requires the `f` suffix: `2.0e-3f`, `1e5f`. `1e5` is an error (`PT0005`); write Decimals out in full.
+- Digits followed directly by `f` are a `Float` even without a decimal point: `1f`.
+- Size suffixes (`i8` to `u64`) apply to whole numbers in any base (`42i64`, `0xFFu8`, `0b1i8`), not to decimals (`1.5i32` is `PT0006`). `f` applies only to base-10 numbers; in hex, `f` is a digit.
+- Base prefixes are lowercase only (`0x`, `0b`); hex digits may be either case. There are no octal literals. Leading zeros are allowed (`007` is 7).
+- A `.` starts a fractional part only when a digit follows it, so `1..5` and `1.max(2)` keep their `.`. Directly after a `.` token no fraction is read, so tuple access `pair.0.1` means `(pair.0).1`.
+
 String escapes: `\n \t \r \\ \" \# \u{1F600}`. Interpolation `#{expr}` requires `expr` to implement `Show`.
 
 ## Operators and punctuation
