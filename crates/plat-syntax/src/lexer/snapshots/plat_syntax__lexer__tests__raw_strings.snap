@@ -1,0 +1,15 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 156
+expression: "dump(r###\"r\"C:\\no\\#{escapes}\" r#\"has \"quotes\"\"# r##\"a \"# inside\"## r\"\" rx r #[attr]\"###)"
+---
+RawStr                             0..19  "r\"C:\\no\\#{escapes}\""
+RawStr                            20..37  "r#\"has \"quotes\"\"#"
+RawStr                            38..56  "r##\"a \"# inside\"##"
+RawStr                            57..60  "r\"\""
+LowerIdent                        61..63  "rx"
+LowerIdent                        64..65  "r"
+HashBracket                       66..68  "#["
+LowerIdent                        68..72  "attr"
+RBracket                          72..73  "]"
+Eof                               73..73  ""

@@ -109,6 +109,19 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 **Alternatives:** Rust's rules (trailing `_` allowed, exponent on any float, `0o` octal). Rejected where they add forms without adding clarity; Platinum wants one way to write each number.
 **Why:** each rule removes an ambiguity the spec left open, keeps literals readable, and matches what a reader would guess. Rule 6 avoids a known Rust papercut (`t.0.1` needing a space or parentheses).
 
+## D-23: String literal details
+**Status:** proposed (M0 step 9). Clarifies `spec/01-lexical.md`, which lists the string forms but not their edge cases.
+**Choice:**
+1. Only triple-quoted strings span lines. An ordinary `"..."` or raw `r"..."` string that reaches the end of its line is `PT0002`, reported at the opening quote.
+2. A `#{` inside an ordinary (one-line) string must be closed on the same line (`PT0007`). Inside a triple-quoted string an interpolation may span lines.
+3. A triple-quoted string ends at the first `"""`. Inside it, `"` and `""` are ordinary text; a `"` directly before the closing `"""` must be escaped (`\"`).
+4. Raw strings are `r`, zero or more `#`, then `"`, and end at `"` followed by the same number of `#`. They have no escapes and no interpolation. There is no raw triple-quoted form in v1.
+5. `\u{...}` takes 1 to 6 hex digits naming a Unicode scalar value (no surrogates `D800`-`DFFF`, nothing above `10FFFF`).
+6. The lexer validates escapes; the parser decodes them and strips the indentation of triple-quoted strings. String tokens keep their raw source spans.
+7. Recovery for the common typo `puts("total: #{n")`: inside a one-line interpolation, a `"` with no `}` later on the line is taken as the end of the string (one `PT0007`, not a cascade).
+**Alternatives:** Rust-style multi-line ordinary strings; raw strings spanning lines. Rejected because keeping ordinary and raw strings on one line means a missing quote is reported on the line where it happened, instead of swallowing the rest of the file.
+**Why:** one rule for "which strings span lines" (only `"""`), precise error locations, and a token stream the parser can trust even after errors.
+
 ## Open questions (to decide during implementation)
 
 - **Q-01 (M6):** stack vs register bytecode.

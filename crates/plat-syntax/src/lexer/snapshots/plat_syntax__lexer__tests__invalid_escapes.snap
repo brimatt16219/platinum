@@ -1,0 +1,23 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 192
+expression: "dump(r#\"\"\\q\" \"\\u{}\" \"\\u{110000}\" \"\\u{D800}\" \"\\u{1234567}\" \"\\u41\" \"\\u{12\" \"ok\\\"#)"
+---
+Str { quote: Single }              0..4   "\"\\q\""
+Str { quote: Single }              5..11  "\"\\u{}\""
+Str { quote: Single }             12..24  "\"\\u{110000}\""
+Str { quote: Single }             25..35  "\"\\u{D800}\""
+Str { quote: Single }             36..49  "\"\\u{1234567}\""
+Str { quote: Single }             50..56  "\"\\u41\""
+Str { quote: Single }             57..64  "\"\\u{12\""
+Str { quote: Single }             65..69  "\"ok\\"
+Eof                               69..69  ""
+PT0004 1..3 invalid escape sequence `\q`
+PT0004 6..10 a `\u{...}` escape needs 1 to 6 hex digits
+PT0004 13..23 not a valid Unicode scalar value (surrogates and values above 10FFFF are not allowed)
+PT0004 26..34 not a valid Unicode scalar value (surrogates and values above 10FFFF are not allowed)
+PT0004 37..48 a `\u{...}` escape needs 1 to 6 hex digits
+PT0004 51..53 expected `{` after `\u`
+PT0004 58..63 unterminated `\u{` escape
+PT0004 68..69 backslash at end of line
+PT0002 65..66 unterminated string literal

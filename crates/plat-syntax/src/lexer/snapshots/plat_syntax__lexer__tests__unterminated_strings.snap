@@ -1,0 +1,11 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 185
+expression: "dump(\"puts(\\\"hello)\\nnext_line\")"
+---
+LowerIdent                         0..4   "puts"
+LParen                             4..5   "("
+Str { quote: Single }              5..12  "\"hello)"
+LowerIdent                        13..22  "next_line"
+Eof                               22..22  ""
+PT0002 5..6 unterminated string literal

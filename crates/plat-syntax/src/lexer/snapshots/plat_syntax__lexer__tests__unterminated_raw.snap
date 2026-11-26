@@ -1,0 +1,9 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 187
+expression: "dump(\"r#\\\"no close\\\"\\nx\")"
+---
+RawStr                             0..12  "r#\"no close\""
+LowerIdent                        13..14  "x"
+Eof                               14..14  ""
+PT0002 0..3 unterminated raw string literal

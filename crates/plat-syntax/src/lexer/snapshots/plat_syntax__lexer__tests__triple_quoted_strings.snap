@@ -1,0 +1,15 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 163
+expression: "dump(\"let s = \\\"\\\"\\\"\\n  line one\\n  say \\\"hi\\\" and \\\"\\\"two\\\"\\\"\\n  total #{n}\\n  \\\"\\\"\\\"\\nx\")"
+---
+Kw(Let)                            0..3   "let"
+LowerIdent                         4..5   "s"
+Eq                                 6..7   "="
+StrStart { quote: Triple }         8..54  "\"\"\"\n  line one\n  say \"hi\" and \"\"two\"\"\n  total "
+InterpStart                       54..56  "#{"
+LowerIdent                        56..57  "n"
+InterpEnd                         57..58  "}"
+StrEnd { quote: Triple }          58..64  "\n  \"\"\""
+LowerIdent                        65..66  "x"
+Eof                               66..66  ""

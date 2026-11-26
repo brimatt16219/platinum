@@ -36,16 +36,28 @@
 //! The lexer must never panic on any input; a test feeds it every pair of
 //! ASCII characters to check.
 //!
+//! ## Strings and the mode stack
+//!
+//! Most of the lexer is "stateless": it looks at the next character and
+//! knows what to do. Interpolated strings break that. Inside
+//! `"total: #{price * qty} USD"`, the text between `#{` and `}` is ordinary
+//! code, and a `}` there might close a record literal *or* the interpolation.
+//! So the lexer keeps a **mode stack** (DECISIONS D-18): each open `#{` pushes
+//! an entry recording how many `{` it has seen since. A `}` with no open `{`
+//! closes the interpolation, pops the entry, and resumes lexing the string.
+//! Because it is a stack, strings inside interpolations inside strings work
+//! to any depth. String lexing lives in `lexer/strings.rs`.
+//!
 //! ## What is not here yet
 //!
-//! As of M0 step 8, still to come:
-//! - step 9: string literals and interpolation (until then `"` is reported
-//!   as an unexpected character),
+//! As of M0 step 9, still to come:
 //! - step 10: the newline rule (until then newlines are plain whitespace).
 
 use plat_diag::{Diagnostic, DiagnosticBag, FileId, SourceFile, Span, codes};
 
-use crate::token::{IntSuffix, Keyword, Token, TokenKind, is_reserved};
+use crate::token::{IntSuffix, Keyword, Quote, Token, TokenKind, is_reserved};
+
+mod strings;
 
 /// The lexer's output: every token (ending with `Eof`) and every problem found.
 #[derive(Debug)]
@@ -66,6 +78,7 @@ pub fn lex(file: FileId, source: &SourceFile) -> Lexed {
         pos: 0,
         tokens: Vec::new(),
         diagnostics: DiagnosticBag::new(),
+        interps: Vec::new(),
     };
     lexer.run();
     Lexed {
@@ -81,6 +94,23 @@ struct Lexer<'src> {
     pos: usize,
     tokens: Vec<Token>,
     diagnostics: DiagnosticBag,
+    /// The mode stack: one entry per `#{` that has not been closed yet.
+    /// Empty means "ordinary code".
+    interps: Vec<Interp>,
+}
+
+/// An open string interpolation (`#{` seen, matching `}` not yet).
+#[derive(Debug, Clone, Copy)]
+struct Interp {
+    /// Quoting of the string this interpolation sits in.
+    quote: Quote,
+    /// `{` opened inside the interpolation and not yet closed. A `}` at
+    /// depth 0 ends the interpolation.
+    depth: u32,
+    /// Byte offset of the string's opening quote, for error labels.
+    string_start: usize,
+    /// Byte offset of the `#{`, for error labels.
+    interp_start: usize,
 }
 
 impl<'src> Lexer<'src> {
@@ -159,6 +189,13 @@ impl<'src> Lexer<'src> {
 
         while let Some(c) = self.peek() {
             let start = self.pos;
+
+            // Inside `#{ ... }`, braces, quotes, and newlines need the mode
+            // stack. Everything else lexes as ordinary code.
+            if !self.interps.is_empty() && self.lex_inside_interp(c, start) {
+                continue;
+            }
+
             match c {
                 // Newlines become significant in step 10 (DECISIONS D-17).
                 ' ' | '\t' | '\r' | '\n' => {
@@ -166,11 +203,18 @@ impl<'src> Lexer<'src> {
                 }
                 '/' if self.peek_second() == Some('/') => self.lex_line_comment(start),
                 '/' if self.peek_second() == Some('*') => self.lex_block_comment(start),
+                '"' => self.lex_string(start),
+                'r' if self.raw_string_ahead() => self.lex_raw_string(start),
                 'a'..='z' | '_' => self.lex_lower_ident(start),
                 'A'..='Z' => self.lex_upper_ident(start),
                 '0'..='9' => self.lex_number(start),
                 _ => self.lex_operator_or_junk(start),
             }
+        }
+
+        // End of file with interpolations still open.
+        while let Some(interp) = self.interps.pop() {
+            self.unterminated_interp(interp, "the file ends before it is closed", true);
         }
 
         let end = self.pos;

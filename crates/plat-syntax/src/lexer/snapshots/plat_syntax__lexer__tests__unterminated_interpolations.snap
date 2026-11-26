@@ -1,0 +1,15 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 200
+expression: "dump(r#\"puts(\"total: #{n\")\"#)"
+---
+LowerIdent                         0..4   "puts"
+LParen                             4..5   "("
+StrStart { quote: Single }         5..13  "\"total: "
+InterpStart                       13..15  "#{"
+LowerIdent                        15..16  "n"
+InterpEnd                         16..16  ""
+StrEnd { quote: Single }          16..17  "\""
+RParen                            17..18  ")"
+Eof                               18..18  ""
+PT0007 13..15 unterminated string interpolation

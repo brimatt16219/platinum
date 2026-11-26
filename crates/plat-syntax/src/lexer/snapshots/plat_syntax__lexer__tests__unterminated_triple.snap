@@ -1,0 +1,8 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 186
+expression: "dump(\"\\\"\\\"\\\"never\\nclosed\")"
+---
+Str { quote: Triple }              0..15  "\"\"\"never\nclosed"
+Eof                               15..15  ""
+PT0002 0..3 unterminated string literal

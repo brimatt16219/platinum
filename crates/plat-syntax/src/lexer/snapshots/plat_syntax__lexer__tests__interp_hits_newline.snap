@@ -1,0 +1,13 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 201
+expression: "dump(\"\\\"a #{x\\ny\")"
+---
+StrStart { quote: Single }         0..3   "\"a "
+InterpStart                        3..5   "#{"
+LowerIdent                         5..6   "x"
+InterpEnd                          6..6   ""
+StrEnd { quote: Single }           6..6   ""
+LowerIdent                         7..8   "y"
+Eof                                8..8   ""
+PT0007 3..5 unterminated string interpolation

@@ -144,7 +144,94 @@ fn question_and_bang_suffixes() {
     ));
 }
 
+#[test]
+fn plain_strings_and_escapes() {
+    insta::assert_snapshot!(dump(
+        r#""hello" "" "tab\there" "quote \" inside" "back\\slash" "\#{not interp}" "\u{1F600} \u{e9}" "café €""#
+    ));
+}
+
+#[test]
+fn raw_strings() {
+    insta::assert_snapshot!(dump(
+        r###"r"C:\no\#{escapes}" r#"has "quotes""# r##"a "# inside"## r"" rx r #[attr]"###
+    ));
+}
+
+#[test]
+fn triple_quoted_strings() {
+    insta::assert_snapshot!(dump(
+        "let s = \"\"\"\n  line one\n  say \"hi\" and \"\"two\"\"\n  total #{n}\n  \"\"\"\nx"
+    ));
+}
+
+#[test]
+fn interpolation() {
+    // `r##"..."##` because the input contains `"#`, which would end `r#"..."#`.
+    insta::assert_snapshot!(dump(r##""a #{x} b #{y + 1} c" "#{only}" "#{a}#{b}""##));
+}
+
+#[test]
+fn nested_interpolation() {
+    // Braces inside the interpolation, and a string inside an interpolation
+    // inside a string.
+    insta::assert_snapshot!(dump(
+        r#""n=#{ xs.map { |x| x } }" "outer #{ f("inner #{ g(1) }") } end""#
+    ));
+}
+
+#[test]
+fn unterminated_strings() {
+    insta::assert_snapshot!(dump("puts(\"hello)\nnext_line"));
+    insta::assert_snapshot!("unterminated_triple", dump("\"\"\"never\nclosed"));
+    insta::assert_snapshot!("unterminated_raw", dump("r#\"no close\"\nx"));
+}
+
+#[test]
+fn invalid_escapes() {
+    insta::assert_snapshot!(dump(
+        r#""\q" "\u{}" "\u{110000}" "\u{D800}" "\u{1234567}" "\u41" "\u{12" "ok\"#
+    ));
+}
+
+#[test]
+fn unterminated_interpolations() {
+    // The documented PT0007 example: the `}` was forgotten.
+    insta::assert_snapshot!(dump(r#"puts("total: #{n")"#));
+    insta::assert_snapshot!("interp_hits_newline", dump("\"a #{x\ny"));
+    insta::assert_snapshot!("interp_hits_eof", dump("\"\"\"a #{x"));
+}
+
 // --- Targeted behavior ---------------------------------------------------
+
+/// Every program in `examples/` must lex without a single diagnostic.
+#[test]
+fn all_examples_lex_cleanly() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples");
+    let mut checked = 0;
+    let mut pending = vec![dir];
+    while let Some(dir) = pending.pop() {
+        for entry in std::fs::read_dir(&dir).expect("examples directory exists") {
+            let path = entry.expect("readable entry").path();
+            if path.is_dir() {
+                pending.push(path);
+            } else if path.extension().is_some_and(|e| e == "plat") {
+                let text = std::fs::read_to_string(&path).expect("readable example");
+                let lexed = lex_str(&text);
+                assert!(
+                    lexed.diagnostics.is_empty(),
+                    "{} has lexer diagnostics: {:#?}",
+                    path.display(),
+                    lexed.diagnostics
+                );
+                checked += 1;
+            }
+        }
+    }
+    // 5 runnable examples plus 3 in examples/broken/ (broken at later
+    // phases, but lexically valid).
+    assert!(checked >= 8, "expected all examples, checked {checked}");
+}
 
 /// The text of each non-Eof token, for compact assertions.
 fn texts(src: &str) -> Vec<String> {
@@ -195,15 +282,6 @@ fn empty_input_is_just_eof() {
     assert_eq!(kinds("   \n\t // only a comment"), vec![TokenKind::Eof]);
 }
 
-#[test]
-fn valid_examples_produce_no_errors_before_strings_exist() {
-    // Until step 9 adds strings, check a string-free slice of real syntax.
-    let src = "fn area(s: Shape) -> Float {\n  match s {\n    Circle(r) => 3.14159f * r * r,\n    Rect(w, h) => w * h,\n  }\n}";
-    let lexed = lex_str(src);
-    assert!(lexed.diagnostics.is_empty(), "{:?}", lexed.diagnostics);
-    assert!(!lexed.tokens.iter().any(|t| t.kind == TokenKind::Error));
-}
-
 /// The lexer must never panic, and its output must always be well formed,
 /// whatever the input. This feeds it every pair of ASCII characters (16,384
 /// inputs) plus some multibyte and adversarial strings, and checks the
@@ -243,8 +321,37 @@ fn never_panics_and_spans_are_well_formed() {
         "\u{201C}",
         "\0",
         "\r\n\r\n",
+        "\"",
+        "\"\"\"",
+        "\"\"\"\"",
+        "\"#{",
+        "\"#{\"",
+        "\"#{\"#{",
+        "\"\\",
+        "\"\\u{",
+        "\"\\u{€}\"",
+        "r#",
+        "r#\"",
+        "r##\"\"#",
+        "\"€#{€}€\"",
     ] {
         inputs.push(s.to_string());
+    }
+    // Every string up to length 5 over the characters that matter to string
+    // lexing (59,049 + shorter inputs), to shake out mode-stack bugs.
+    let alphabet = ['"', '#', '{', '}', '\\', '\n', 'r', 'u', 'x'];
+    let mut frontier = vec![String::new()];
+    for _ in 0..5 {
+        let mut next = Vec::new();
+        for s in &frontier {
+            for &c in &alphabet {
+                let mut t = s.clone();
+                t.push(c);
+                next.push(t);
+            }
+        }
+        inputs.extend(next.iter().cloned());
+        frontier = next;
     }
 
     for src in &inputs {
@@ -276,5 +383,61 @@ fn never_panics_and_spans_are_well_formed() {
                 "bad diagnostic span for {src:?}"
             );
         }
+        if let Err(problem) = check_string_structure(tokens) {
+            panic!("unbalanced string tokens for {src:?}: {problem}\n{tokens:#?}");
+        }
     }
+}
+
+/// Checks that string pieces form a well-nested sequence, which the parser
+/// will rely on:
+///
+/// ```text
+/// StrStart InterpStart ...code... InterpEnd (StrMiddle InterpStart ...code... InterpEnd)* StrEnd
+/// ```
+///
+/// The "code" parts may themselves contain whole strings, so this keeps a
+/// stack of open interpolations.
+fn check_string_structure(tokens: &[crate::token::Token]) -> Result<(), String> {
+    use TokenKind::*;
+    // Each entry: are we waiting for the string piece after an InterpEnd?
+    let mut open_interps = 0usize;
+    let mut expect_interp_start = false;
+    let mut expect_piece_after_interp = false;
+
+    for (i, t) in tokens.iter().enumerate() {
+        let k = t.kind;
+        if expect_interp_start {
+            if k != InterpStart {
+                return Err(format!(
+                    "token {i}: expected InterpStart after a string piece, got {k:?}"
+                ));
+            }
+            expect_interp_start = false;
+        }
+        if expect_piece_after_interp {
+            if !matches!(k, StrMiddle { .. } | StrEnd { .. }) {
+                return Err(format!(
+                    "token {i}: expected StrMiddle/StrEnd after InterpEnd, got {k:?}"
+                ));
+            }
+            expect_piece_after_interp = false;
+        }
+        match k {
+            StrStart { .. } | StrMiddle { .. } => expect_interp_start = true,
+            InterpStart => open_interps += 1,
+            InterpEnd => {
+                if open_interps == 0 {
+                    return Err(format!("token {i}: InterpEnd with no open interpolation"));
+                }
+                open_interps -= 1;
+                expect_piece_after_interp = true;
+            }
+            _ => {}
+        }
+    }
+    if open_interps != 0 || expect_interp_start || expect_piece_after_interp {
+        return Err("stream ended with an unclosed string or interpolation".to_string());
+    }
+    Ok(())
 }

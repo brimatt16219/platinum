@@ -1,0 +1,14 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 149
+expression: "dump(r#\"\"hello\" \"\" \"tab\\there\" \"quote \\\" inside\" \"back\\\\slash\" \"\\#{not interp}\" \"\\u{1F600} \\u{e9}\" \"café €\"\"#)"
+---
+Str { quote: Single }              0..7   "\"hello\""
+Str { quote: Single }              8..10  "\"\""
+Str { quote: Single }             11..22  "\"tab\\there\""
+Str { quote: Single }             23..40  "\"quote \\\" inside\""
+Str { quote: Single }             41..54  "\"back\\\\slash\""
+Str { quote: Single }             55..71  "\"\\#{not interp}\""
+Str { quote: Single }             72..90  "\"\\u{1F600} \\u{e9}\""
+Str { quote: Single }             91..102 "\"café €\""
+Eof                              102..102 ""
