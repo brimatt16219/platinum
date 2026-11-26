@@ -1,0 +1,25 @@
+---
+source: crates/plat-diag/src/render/tests.rs
+expression: "render_human([&error, &warning], &sources, HumanOptions { color: false })"
+---
+[PT0002] Error: unterminated string literal
+   ╭─[ eof.plat:1:6 ]
+   │
+ 1 │ puts("hello
+   │      ┬     │ 
+   │      ╰─────── this string is never closed
+   │            │ 
+   │            ╰─ file ends here
+   │ 
+   │ Note: for more information, run `plat explain PT0002`
+───╯
+
+[PT1041] Warning: ambiguous `?`
+   ╭─[ eof.plat:1:1 ]
+   │
+ 1 │ puts("hello
+   │ ──┬─  
+   │   ╰─── ambiguous `?`
+   │ 
+   │ Note: for more information, run `plat explain PT1041`
+───╯

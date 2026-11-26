@@ -1,0 +1,22 @@
+---
+source: crates/plat-diag/src/render/tests.rs
+expression: "render_human([&d], &sources, HumanOptions { color: false })"
+---
+[PT3001] Error: refinement may not hold
+    ╭─[ examples/broken/bank_fee.plat:10:33 ]
+    │
+  9 │   if amt > acct.balance { return Err(Insufficient) }
+    │      ─────────┬────────  
+    │               ╰────────── this condition was false
+ 10 │   Ok(Account { ..acct, balance: acct.balance - amt - FEE })
+    │                                 ────────────┬───────────  
+    │                                             ╰───────────── field `balance` requires `self >= 0` (from type Account)
+    │ 
+    │ Help: include FEE in the balance check (maybe-incorrect)
+    │ 
+    │ Note 1: counterexample: acct.balance = 5, amt = 5, FEE = 1
+    │ 
+    │ Note 2: so balance would be 5 - 5 - 1 = -1
+    │ 
+    │ Note 3: for more information, run `plat explain PT3001`
+────╯
