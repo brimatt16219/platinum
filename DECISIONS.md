@@ -96,6 +96,7 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 - (b) Parser (M1): `Newline` tokens are skipped inside item headers (between `fn` and the body's `{`, between `while`/`for` and the loop body, and before `=` / after `=` in `type` declarations), where a statement cannot end anyway.
 **Alternatives:** make `needs`/`requires`/`ensures`/`invariant`/`{` continuation tokens in the lexer. Rejected for `{`: `foo()` NL `{ ... }` would silently become a trailing-block call, changing meaning. Rejected for the clause keywords as unnecessary once (b) exists, since (b) is needed for `{` anyway.
 **Why:** (a) is a pure lexer fix that the examples require. (b) keeps the lexer rule simple (Go style) while allowing the brace-on-its-own-line layout the examples use, and limits newline tolerance to places where it cannot change meaning.
+**Note (M0 step 10, implementing the lexer side):** two more places follow from (b) and are recorded in `spec/01-lexical.md`: the newline between an attribute line and its item, and newlines inside brace-delimited lists (record literals and types, match arms, field patterns, `trait`/`impl`/`cap` bodies), which the lexer cannot distinguish from blocks. The parser skips `Newline` there too. Seen in `examples/refund.plat` (attributes) and `examples/shapes.plat` (match arms).
 
 ## D-22: Number literal details
 **Status:** accepted (2026-11-26, proposed in M0 step 7). Clarifies `spec/01-lexical.md`, which lists literal forms by example but leaves edge cases open.

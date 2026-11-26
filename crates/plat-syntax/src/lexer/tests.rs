@@ -202,6 +202,108 @@ fn unterminated_interpolations() {
     insta::assert_snapshot!("interp_hits_eof", dump("\"\"\"a #{x"));
 }
 
+// --- Newlines (DECISIONS D-17, D-21) ---------------------------------------
+
+/// Renders tokens as source-like lines: token texts separated by spaces, and
+/// `⏎` plus a line break wherever the lexer emitted a `Newline` token. Lines
+/// that *don't* end in `⏎` were joined with the next line by the lexer.
+fn layout(src: &str) -> String {
+    let lexed = lex_str(src);
+    let mut out = String::new();
+    for t in &lexed.tokens {
+        match t.kind {
+            TokenKind::Eof => {}
+            TokenKind::Newline => out.push_str("⏎\n"),
+            _ => {
+                let text = &src[t.span.start as usize..t.span.end as usize];
+                out.push_str(&text.replace('\n', "\\n"));
+                out.push(' ');
+            }
+        }
+    }
+    for d in &lexed.diagnostics {
+        out.push_str(&format!("\n{} {}", d.code, d.message));
+    }
+    out
+}
+
+#[test]
+fn newline_ends_simple_statements() {
+    insta::assert_snapshot!(layout(
+        "let a = 1\nlet b = a\nreturn\nbreak\ncontinue\nfoo()\nxs[0]\n{ }\nx?"
+    ));
+}
+
+#[test]
+fn newline_after_unfinished_expression_is_ignored() {
+    // Trailing operator, `=`, `,`, `(`: the expression is obviously unfinished.
+    insta::assert_snapshot!(layout(
+        "let total = a +\n  b\nlet x =\n  5\nf(a,\n  b)\nlet ok = a &&\n  b"
+    ));
+}
+
+#[test]
+fn leading_dot_and_operator_chains() {
+    insta::assert_snapshot!(layout(
+        "let total = invoices\n  .reject { |i| i.paid? }\n  .map { |i| i.amount }\n  .sum\nlet y = a\n  + b\n  |> f\n  && c\nnext"
+    ));
+}
+
+#[test]
+fn parens_and_brackets_ignore_newlines_but_blocks_inside_them_do_not() {
+    insta::assert_snapshot!(layout(
+        "let xs = [\n  1,\n  2\n]\nfoo(\n  a,\n  xs.map { |x|\n    let y = x\n    y\n  }\n)\n#[derive(\n  Eq\n)]\ntype P = { x: Int }"
+    ));
+}
+
+#[test]
+fn variant_declaration_with_leading_bars() {
+    // D-21 (a): `|` at the start of a line continues the declaration.
+    insta::assert_snapshot!(layout(
+        "type Shape =\n  | Circle(radius: Float)\n  | Rect(w: Float, h: Float)\n\nfn area() {}"
+    ));
+}
+
+#[test]
+fn multi_line_function_header() {
+    // D-21: `->` on its own line continues. Newlines before `ensures`, `needs`,
+    // and `{` remain; the parser skips them inside item headers (D-21 (b)).
+    insta::assert_snapshot!(layout(
+        "pub fn transfer(from: Account, amt: Int)\n  -> Result[Account, Closed]\n  needs Gateway\n  ensures result.ok? =>\n    result.unwrap.balance >= 0\n{\n  Ok(from)\n}"
+    ));
+}
+
+#[test]
+fn blank_lines_comments_and_doc_comments() {
+    insta::assert_snapshot!(layout(
+        "a\n\n\n// comment\n\nb /* block\n spanning */\nc\n/// docs for f\n/// more docs\nfn f() {}"
+    ));
+}
+
+#[test]
+fn semicolons_and_crlf() {
+    insta::assert_snapshot!(layout("a; b\r\nc;\r\nd\r\n"));
+}
+
+#[test]
+fn newlines_inside_interpolations() {
+    // Inside `#{ }` newlines are insignificant, except inside a block nested
+    // in the interpolation. (Only triple-quoted strings allow this; D-23.)
+    insta::assert_snapshot!(layout(
+        "let s = \"\"\"\n  #{\n    a +\n    b\n  }\n  #{ xs.each { |x|\n    let y = x\n    y\n  } }\n  \"\"\"\nnext"
+    ));
+}
+
+#[test]
+fn example_shapes_layout() {
+    insta::assert_snapshot!(layout(include_str!("../../../../examples/shapes.plat")));
+}
+
+#[test]
+fn example_refund_layout() {
+    insta::assert_snapshot!(layout(include_str!("../../../../examples/refund.plat")));
+}
+
 // --- Targeted behavior ---------------------------------------------------
 
 /// Every program in `examples/` must lex without a single diagnostic.
@@ -386,7 +488,40 @@ fn never_panics_and_spans_are_well_formed() {
         if let Err(problem) = check_string_structure(tokens) {
             panic!("unbalanced string tokens for {src:?}: {problem}\n{tokens:#?}");
         }
+        if let Err(problem) = check_newlines(tokens) {
+            panic!("bad Newline placement for {src:?}: {problem}\n{tokens:#?}");
+        }
     }
+}
+
+/// `Newline` tokens obey the D-17 rule: never first, never doubled, only
+/// after a token that can end a statement, and never before a token that
+/// continues the line.
+fn check_newlines(tokens: &[crate::token::Token]) -> Result<(), String> {
+    for (i, t) in tokens.iter().enumerate() {
+        if t.kind != TokenKind::Newline {
+            continue;
+        }
+        let Some(prev) = i.checked_sub(1).map(|p| tokens[p].kind) else {
+            return Err("Newline is the first token".into());
+        };
+        if !prev.can_end_statement() {
+            return Err(format!(
+                "token {i}: Newline after {prev:?}, which cannot end a statement"
+            ));
+        }
+        if let Some(next) = tokens.get(i + 1).map(|n| n.kind) {
+            if next == TokenKind::Newline {
+                return Err(format!("token {i}: two Newline tokens in a row"));
+            }
+            if next.continues_line() {
+                return Err(format!(
+                    "token {i}: Newline before {next:?}, which continues the line"
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Checks that string pieces form a well-nested sequence, which the parser

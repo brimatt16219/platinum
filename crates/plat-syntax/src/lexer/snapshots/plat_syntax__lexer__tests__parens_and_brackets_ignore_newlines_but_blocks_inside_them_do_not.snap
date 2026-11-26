@@ -1,0 +1,11 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 254
+expression: "layout(\"let xs = [\\n  1,\\n  2\\n]\\nfoo(\\n  a,\\n  xs.map { |x|\\n    let y = x\\n    y\\n  }\\n)\\n#[derive(\\n  Eq\\n)]\\ntype P = { x: Int }\")"
+---
+let xs = [ 1 , 2 ] ⏎
+foo ( a , xs . map { | x | let y = x ⏎
+y ⏎
+} ) ⏎
+#[ derive ( Eq ) ] ⏎
+type P = { x : Int }

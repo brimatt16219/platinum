@@ -1,0 +1,9 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 292
+expression: "layout(\"let s = \\\"\\\"\\\"\\n  #{\\n    a +\\n    b\\n  }\\n  #{ xs.each { |x|\\n    let y = x\\n    y\\n  } }\\n  \\\"\\\"\\\"\\nnext\")"
+---
+let s = """\n   #{ a + b } \n   #{ xs . each { | x | let y = x ⏎
+y ⏎
+} } \n  """ ⏎
+next

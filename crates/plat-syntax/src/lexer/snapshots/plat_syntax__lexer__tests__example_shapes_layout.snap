@@ -1,0 +1,21 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 299
+expression: "layout(include_str!(\"../../../../examples/shapes.plat\"))"
+---
+type Shape = | Circle ( radius : Float ) | Rect ( w : Float , h : Float ) ⏎
+trait Describe { fn describe ( self ) -> String ⏎
+} ⏎
+impl Describe for Shape { fn describe ( self ) -> String { match self { Circle ( r ) => "circle r= #{ r } " , Rect ( w , h ) => "rect  #{ w } x #{ h } " , } ⏎
+} ⏎
+} ⏎
+fn area ( s : Shape ) -> Float { match s { Circle ( r ) => 3.14159f * r * r , Rect ( w , h ) => w * h , } ⏎
+} ⏎
+fn main ( ) needs Console { let shapes = [ Circle ( 1.0f ) , Rect ( 2.0f , 3.0f ) , Circle ( 0.5f ) ] ⏎
+shapes . each { | s | puts ( " #{ s . describe } : area  #{ s . area } " ) } ⏎
+let big = shapes . filter { | s | s . area > 1.0f } ⏎
+puts ( " #{ big . len }  shapes have area > 1" ) ⏎
+var total = 0.0f ⏎
+shapes . each { | s | total += s . area } ⏎
+puts ( "total area  #{ total } " ) ⏎
+} ⏎

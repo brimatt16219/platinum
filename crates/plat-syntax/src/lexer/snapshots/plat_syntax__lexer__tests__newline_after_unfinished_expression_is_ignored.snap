@@ -1,0 +1,9 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 240
+expression: "layout(\"let total = a +\\n  b\\nlet x =\\n  5\\nf(a,\\n  b)\\nlet ok = a &&\\n  b\")"
+---
+let total = a + b ⏎
+let x = 5 ⏎
+f ( a , b ) ⏎
+let ok = a && b

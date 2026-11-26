@@ -1,0 +1,41 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 304
+expression: "layout(include_str!(\"../../../../examples/refund.plat\"))"
+---
+#[ derive ( Eq , Show ) ] ⏎
+type Currency = USD | EUR | GBP ⏎
+#[ derive ( Eq , Show ) ] ⏎
+type Money = { cents : Int where self >= 0 , ccy : Currency } ⏎
+#[ derive ( Eq , Show ) ] ⏎
+opaque type PaymentId = String ⏎
+type Payment = { id : PaymentId , amount : Money , refunded : Int where self >= 0 , closed? : Bool } ⏎
+#[ derive ( Eq , Show ) ] ⏎
+type Refund = { payment : PaymentId , amount : Money } ⏎
+cap Gateway { fn refund ( id : PaymentId , amt : Money ) -> Result [ Refund , GatewayDown ] ⏎
+} ⏎
+/// Refund part or all of a payment. Never refunds more than was paid. pub fn refund ( p : Payment , amt : Money ) -> Result [ Refund , Closed | OverLimit | CurrencyMismatch | GatewayDown ] ⏎
+needs Gateway ⏎
+ensures result . ok? => result . unwrap . amount . cents + p . refunded <= p . amount . cents ⏎
+{ if p . closed? { return Err ( Closed ) } ⏎
+if amt . ccy != p . amount . ccy { return Err ( CurrencyMismatch ) } ⏎
+if amt . cents + p . refunded > p . amount . cents { return Err ( OverLimit ) } ⏎
+let _ = Gateway . refund ( p . id , amt ) ? ⏎
+Ok ( Refund { payment : p . id , amount : amt } ) ⏎
+} ⏎
+type FakeGateway = { up? : Bool } ⏎
+impl Gateway for FakeGateway { fn refund ( self , id : PaymentId , amt : Money ) -> Result [ Refund , GatewayDown ] { if self . up? { Ok ( Refund { payment : id , amount : amt } ) } else { Err ( GatewayDown ) } ⏎
+} ⏎
+} ⏎
+fn sample ( cents : Int where self >= 0 ) -> Payment { Payment { id : PaymentId ( "pay_123" ) , amount : Money { cents , ccy : USD } , refunded : 0 , closed? : false } ⏎
+} ⏎
+test "partial refund succeeds" { handle Gateway with FakeGateway { up? : true } { let r = refund ( sample ( 5000 ) , Money { cents : 1000 , ccy : USD } ) ⏎
+assert r . ok? ⏎
+} ⏎
+} ⏎
+test "cannot refund more than paid" { handle Gateway with FakeGateway { up? : true } { assert refund ( sample ( 5000 ) , Money { cents : 5001 , ccy : USD } ) == Err ( OverLimit ) ⏎
+} ⏎
+} ⏎
+test "gateway outage is reported, not thrown" { handle Gateway with FakeGateway { up? : false } { assert refund ( sample ( 5000 ) , Money { cents : 10 , ccy : USD } ) == Err ( GatewayDown ) ⏎
+} ⏎
+} ⏎

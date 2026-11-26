@@ -1,0 +1,14 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 232
+expression: "layout(\"let a = 1\\nlet b = a\\nreturn\\nbreak\\ncontinue\\nfoo()\\nxs[0]\\n{ }\\nx?\")"
+---
+let a = 1 ⏎
+let b = a ⏎
+return ⏎
+break ⏎
+continue ⏎
+foo ( ) ⏎
+xs [ 0 ] ⏎
+{ } ⏎
+x?

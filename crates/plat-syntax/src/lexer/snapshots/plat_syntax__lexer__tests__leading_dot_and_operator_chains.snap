@@ -1,0 +1,8 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 247
+expression: "layout(\"let total = invoices\\n  .reject { |i| i.paid? }\\n  .map { |i| i.amount }\\n  .sum\\nlet y = a\\n  + b\\n  |> f\\n  && c\\nnext\")"
+---
+let total = invoices . reject { | i | i . paid? } . map { | i | i . amount } . sum ⏎
+let y = a + b |> f && c ⏎
+next

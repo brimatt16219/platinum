@@ -1,0 +1,7 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 285
+expression: "layout(\"a; b\\r\\nc;\\r\\nd\\r\\n\")"
+---
+a ; b ⏎
+c ; d ⏎

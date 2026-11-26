@@ -1,0 +1,10 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 271
+expression: "layout(\"pub fn transfer(from: Account, amt: Int)\\n  -> Result[Account, Closed]\\n  needs Gateway\\n  ensures result.ok? =>\\n    result.unwrap.balance >= 0\\n{\\n  Ok(from)\\n}\")"
+---
+pub fn transfer ( from : Account , amt : Int ) -> Result [ Account , Closed ] ⏎
+needs Gateway ⏎
+ensures result . ok? => result . unwrap . balance >= 0 ⏎
+{ Ok ( from ) ⏎
+}

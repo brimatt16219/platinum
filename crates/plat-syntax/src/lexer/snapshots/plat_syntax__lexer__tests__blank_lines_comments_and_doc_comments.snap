@@ -1,0 +1,9 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 278
+expression: "layout(\"a\\n\\n\\n// comment\\n\\nb /* block\\n spanning */\\nc\\n/// docs for f\\n/// more docs\\nfn f() {}\")"
+---
+a ⏎
+b ⏎
+c ⏎
+/// docs for f /// more docs fn f ( ) { }

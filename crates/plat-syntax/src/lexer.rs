@@ -48,10 +48,37 @@
 //! Because it is a stack, strings inside interpolations inside strings work
 //! to any depth. String lexing lives in `lexer/strings.rs`.
 //!
-//! ## What is not here yet
+//! ## Which newlines end a statement (DECISIONS D-17, D-21)
 //!
-//! As of M0 step 9, still to come:
-//! - step 10: the newline rule (until then newlines are plain whitespace).
+//! Platinum has no required semicolons, so the lexer decides which newlines
+//! act as statement terminators and emits a `Newline` token only for those.
+//! Three questions decide it:
+//!
+//! 1. **Are we in a place where statements live?** Newlines inside `( )`,
+//!    `[ ]`, `#[ ]`, and `#{ }` are never significant, so argument lists and
+//!    list literals can span lines freely. Inside `{ }` (a block) they are.
+//!    The lexer tracks this with a stack of open delimiters (`delims`),
+//!    because the answer depends on the *innermost* one: a block inside
+//!    parentheses, as in `xs.each { |x| ... }` passed as an argument, has
+//!    significant newlines again.
+//! 2. **Can the statement end here?** Only after a token like an identifier,
+//!    literal, `)`, or `return` (`TokenKind::can_end_statement`). After `+`
+//!    or `=`, the expression is obviously unfinished.
+//! 3. **Does the next line continue this one?** If the next real token is
+//!    `.`, `|>`, `?`, a binary operator, `|`, or `->`
+//!    (`TokenKind::continues_line`), the newline is dropped. This is what
+//!    allows Ruby-style chains with the dot at the start of each line.
+//!
+//! Question 3 needs to see the *next* token, which is not lexed yet. So a
+//! newline that passes questions 1 and 2 is only remembered
+//! (`pending_newline`), and the decision is made in `push` when the next
+//! token arrives. Blank lines and comment lines in between change nothing,
+//! so several newlines collapse into one `Newline` token.
+//!
+//! One consequence to know: a line starting with `-` continues the previous
+//! line, so `x` followed by a line `-1` means `x - 1`. That is the rule as
+//! specified (a leading binary operator continues), and the formatter will
+//! never produce such a layout for a standalone negative literal.
 
 use plat_diag::{Diagnostic, DiagnosticBag, FileId, SourceFile, Span, codes};
 
@@ -79,6 +106,8 @@ pub fn lex(file: FileId, source: &SourceFile) -> Lexed {
         tokens: Vec::new(),
         diagnostics: DiagnosticBag::new(),
         interps: Vec::new(),
+        delims: Vec::new(),
+        pending_newline: None,
     };
     lexer.run();
     Lexed {
@@ -97,6 +126,12 @@ struct Lexer<'src> {
     /// The mode stack: one entry per `#{` that has not been closed yet.
     /// Empty means "ordinary code".
     interps: Vec<Interp>,
+    /// Open delimiters (`(`, `[`, `#[`, `{`, `#{`), innermost last. Decides
+    /// whether a newline can be significant (see module docs).
+    delims: Vec<TokenKind>,
+    /// Offset of a newline that may end a statement, waiting to see whether
+    /// the next token continues the line.
+    pending_newline: Option<usize>,
 }
 
 /// An open string interpolation (`#{` seen, matching `}` not yet).
@@ -166,9 +201,39 @@ impl<'src> Lexer<'src> {
         Span::new(self.file, start as u32, self.pos as u32)
     }
 
+    /// Adds a token. Every token goes through here, which makes it the one
+    /// place to (1) settle a pending newline now that the next token is known,
+    /// and (2) keep the delimiter stack up to date.
     fn push(&mut self, kind: TokenKind, start: usize) {
+        if let Some(nl) = self.pending_newline.take()
+            && !kind.continues_line()
+        {
+            let span = Span::new(self.file, nl as u32, nl as u32 + 1);
+            self.tokens.push(Token::new(TokenKind::Newline, span));
+        }
+
+        match kind {
+            TokenKind::LParen
+            | TokenKind::LBracket
+            | TokenKind::HashBracket
+            | TokenKind::LBrace
+            | TokenKind::InterpStart => self.delims.push(kind),
+            // Closers pop whatever is on top, matching or not. Reporting a
+            // mismatched `(]` is the parser's job; the lexer only needs a
+            // sensible guess for newline significance.
+            TokenKind::RParen | TokenKind::RBracket | TokenKind::RBrace | TokenKind::InterpEnd => {
+                self.delims.pop();
+            }
+            _ => {}
+        }
+
         let span = self.span_from(start);
         self.tokens.push(Token::new(kind, span));
+    }
+
+    /// Newlines only matter at the top level or directly inside a `{ }` block.
+    fn newlines_significant(&self) -> bool {
+        matches!(self.delims.last(), None | Some(TokenKind::LBrace))
     }
 
     fn report(&mut self, diagnostic: Diagnostic) {
@@ -197,8 +262,20 @@ impl<'src> Lexer<'src> {
             }
 
             match c {
-                // Newlines become significant in step 10 (DECISIONS D-17).
-                ' ' | '\t' | '\r' | '\n' => {
+                ' ' | '\t' | '\r' => {
+                    self.bump();
+                }
+                // Questions 1 and 2 from the module docs. Question 3 is
+                // answered in `push` once the next token is known.
+                '\n' => {
+                    if self.pending_newline.is_none()
+                        && self.newlines_significant()
+                        && self
+                            .previous_kind()
+                            .is_some_and(TokenKind::can_end_statement)
+                    {
+                        self.pending_newline = Some(start);
+                    }
                     self.bump();
                 }
                 '/' if self.peek_second() == Some('/') => self.lex_line_comment(start),

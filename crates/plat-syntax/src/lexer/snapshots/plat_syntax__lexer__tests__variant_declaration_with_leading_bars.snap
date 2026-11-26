@@ -1,0 +1,7 @@
+---
+source: crates/plat-syntax/src/lexer/tests.rs
+assertion_line: 262
+expression: "layout(\"type Shape =\\n  | Circle(radius: Float)\\n  | Rect(w: Float, h: Float)\\n\\nfn area() {}\")"
+---
+type Shape = | Circle ( radius : Float ) | Rect ( w : Float , h : Float ) ⏎
+fn area ( ) { }
