@@ -21,6 +21,8 @@ publish = false
 # dependencies) are added in the step that first uses them; cargo warns about
 # unused ones.
 [workspace.dependencies]
+plat-diag = { path = "crates/plat-diag" }
+
 ariadne = "0.6"
 insta = "1.49"
 serde = { version = "1.0", features = ["derive"] }

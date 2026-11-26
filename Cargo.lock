@@ -127,6 +127,9 @@ dependencies = [
 [[package]]
 name = "plat-syntax"
 version = "0.0.1"
+dependencies = [
+ "plat-diag",
+]
 
 [[package]]
 name = "proc-macro2"

@@ -61,11 +61,17 @@ pub struct SourceFile {
 impl SourceFile {
     /// Loads `text` under the display `name` (usually a path) and builds the
     /// line table.
-    pub fn new(name: impl Into<String>, text: impl Into<String>) -> Result<SourceFile, FileTooLarge> {
+    pub fn new(
+        name: impl Into<String>,
+        text: impl Into<String>,
+    ) -> Result<SourceFile, FileTooLarge> {
         let name = name.into();
         let text = text.into();
         if u32::try_from(text.len()).is_err() {
-            return Err(FileTooLarge { name, len: text.len() });
+            return Err(FileTooLarge {
+                name,
+                len: text.len(),
+            });
         }
 
         let mut line_starts = vec![0u32];
@@ -75,7 +81,11 @@ impl SourceFile {
                 line_starts.push((i + 1) as u32);
             }
         }
-        Ok(SourceFile { name, text, line_starts })
+        Ok(SourceFile {
+            name,
+            text,
+            line_starts,
+        })
     }
 
     pub fn name(&self) -> &str {
@@ -165,7 +175,10 @@ impl SourceMap {
 
     /// All files with their ids, in the order they were added.
     pub fn iter(&self) -> impl Iterator<Item = (FileId, &SourceFile)> {
-        self.files.iter().enumerate().map(|(i, f)| (FileId(i as u32), f))
+        self.files
+            .iter()
+            .enumerate()
+            .map(|(i, f)| (FileId(i as u32), f))
     }
 }
 

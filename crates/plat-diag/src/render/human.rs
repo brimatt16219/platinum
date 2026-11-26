@@ -104,7 +104,8 @@ pub fn render_one(diagnostic: &Diagnostic, sources: &SourceMap, options: HumanOp
     // Stable sort: labels at the same position keep primary-first order.
     labels.sort_by_key(|(span, _)| (span.file, span.start, span.end));
     for (span, text) in labels {
-        builder = builder.with_label(AriadneLabel::new(ariadne_span(span, sources)).with_message(text));
+        builder =
+            builder.with_label(AriadneLabel::new(ariadne_span(span, sources)).with_message(text));
     }
     for note in &diagnostic.notes {
         builder = builder.with_note(note);

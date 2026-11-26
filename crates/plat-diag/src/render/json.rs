@@ -59,7 +59,10 @@ pub fn render_json<'a>(
             errors: count(&diagnostics, Severity::Error),
             warnings: count(&diagnostics, Severity::Warning),
         },
-        diagnostics: diagnostics.iter().map(|d| JsonDiagnostic::new(d, sources)).collect(),
+        diagnostics: diagnostics
+            .iter()
+            .map(|d| JsonDiagnostic::new(d, sources))
+            .collect(),
     };
 
     // Serializing plain structs of strings and numbers cannot fail: there are
@@ -69,7 +72,10 @@ pub fn render_json<'a>(
 }
 
 fn count(diagnostics: &[&Diagnostic], severity: Severity) -> usize {
-    diagnostics.iter().filter(|d| d.severity == severity).count()
+    diagnostics
+        .iter()
+        .filter(|d| d.severity == severity)
+        .count()
 }
 
 // --- Output structs: their fields, in order, are the JSON layout. -----------
@@ -108,7 +114,11 @@ impl<'a> JsonDiagnostic<'a> {
             severity: d.severity.as_str(),
             message: &d.message,
             primary: JsonLabel::new(&d.primary, sources),
-            secondary: d.secondary.iter().map(|l| JsonLabel::new(l, sources)).collect(),
+            secondary: d
+                .secondary
+                .iter()
+                .map(|l| JsonLabel::new(l, sources))
+                .collect(),
             notes: &d.notes,
             // Fix ids are numbered per diagnostic, starting at 1.
             fixes: d
@@ -155,11 +165,19 @@ impl JsonPosition {
         match sources.get(span.file) {
             Some(file) => {
                 let lc = file.line_col(offset);
-                JsonPosition { line: lc.line, col: lc.col, offset }
+                JsonPosition {
+                    line: lc.line,
+                    col: lc.col,
+                    offset,
+                }
             }
             // Unknown file: no way to compute line/col. 0 is never a valid
             // 1-based value, so consumers can tell something is wrong.
-            None => JsonPosition { line: 0, col: 0, offset },
+            None => JsonPosition {
+                line: 0,
+                col: 0,
+                offset,
+            },
         }
     }
 }
@@ -178,7 +196,11 @@ impl<'a> JsonFix<'a> {
             id: format!("fix-{number}"),
             title: &fix.title,
             applicability: fix.applicability.as_str(),
-            edits: fix.edits.iter().map(|e| JsonEdit::new(e, sources)).collect(),
+            edits: fix
+                .edits
+                .iter()
+                .map(|e| JsonEdit::new(e, sources))
+                .collect(),
         }
     }
 }

@@ -20,7 +20,9 @@ const BANK_FEE: &str = include_str!("../../../../examples/broken/bank_fee.plat")
 /// Span of the first occurrence of `needle` in `text`. Test-only helper; a
 /// missing needle means the example file changed and the test must be updated.
 fn find(file: FileId, text: &str, needle: &str) -> Span {
-    let start = text.find(needle).unwrap_or_else(|| panic!("{needle:?} not found"));
+    let start = text
+        .find(needle)
+        .unwrap_or_else(|| panic!("{needle:?} not found"));
     Span::new(file, start as u32, (start + needle.len()) as u32)
 }
 
@@ -75,7 +77,8 @@ fn json_is_valid_and_has_the_v1_envelope() {
 #[test]
 fn json_with_no_diagnostics() {
     let sources = SourceMap::new();
-    let json: Value = serde_json::from_str(&render_json("plat check", [], &sources)).expect("valid");
+    let json: Value =
+        serde_json::from_str(&render_json("plat check", [], &sources)).expect("valid");
     assert_eq!(json["summary"]["errors"], 0);
     assert_eq!(json["summary"]["warnings"], 0);
     assert_eq!(json["diagnostics"], Value::Array(vec![]));
@@ -89,7 +92,8 @@ fn json_columns_count_characters_and_offsets_count_bytes() {
     let dollar = find(file, text, "$");
     let d = Diagnostic::error(Code(1), "unexpected character `$`", dollar);
 
-    let json: Value = serde_json::from_str(&render_json("plat check", [&d], &sources)).expect("valid");
+    let json: Value =
+        serde_json::from_str(&render_json("plat check", [&d], &sources)).expect("valid");
     let start = &json["diagnostics"][0]["primary"]["start"];
     assert_eq!(start["offset"], 14); // `€` is 3 bytes
     assert_eq!(start["col"], 13); // but one character
@@ -100,7 +104,8 @@ fn json_columns_count_characters_and_offsets_count_bytes() {
 fn json_survives_a_span_into_an_unknown_file() {
     let sources = SourceMap::new();
     let d = Diagnostic::error(Code(1), "x", Span::new(FileId(9), 0, 1));
-    let json: Value = serde_json::from_str(&render_json("plat check", [&d], &sources)).expect("valid");
+    let json: Value =
+        serde_json::from_str(&render_json("plat check", [&d], &sources)).expect("valid");
     assert_eq!(json["diagnostics"][0]["primary"]["file"], "<unknown>");
     assert_eq!(json["diagnostics"][0]["primary"]["start"]["line"], 0);
 }
@@ -118,7 +123,11 @@ fn human_end_of_file_point_and_warning() {
         .with_label(eof, "file ends here");
     let warning = Diagnostic::warning(Code(1041), "ambiguous `?`", find(file, text, "puts"));
 
-    insta::assert_snapshot!(render_human([&error, &warning], &sources, HumanOptions { color: false }));
+    insta::assert_snapshot!(render_human(
+        [&error, &warning],
+        &sources,
+        HumanOptions { color: false }
+    ));
 }
 
 #[test]

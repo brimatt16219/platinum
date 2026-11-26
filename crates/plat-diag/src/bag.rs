@@ -67,7 +67,10 @@ impl DiagnosticBag {
     }
 
     fn count(&self, severity: Severity) -> usize {
-        self.diagnostics.iter().filter(|d| d.severity == severity).count()
+        self.diagnostics
+            .iter()
+            .filter(|d| d.severity == severity)
+            .count()
     }
 
     pub fn iter(&self) -> std::slice::Iter<'_, Diagnostic> {
@@ -77,8 +80,13 @@ impl DiagnosticBag {
     /// Orders diagnostics by file, then start offset, then end offset.
     /// Stable, so ties keep their reporting order.
     pub fn sort(&mut self) {
-        self.diagnostics
-            .sort_by_key(|d| (d.primary.span.file, d.primary.span.start, d.primary.span.end));
+        self.diagnostics.sort_by_key(|d| {
+            (
+                d.primary.span.file,
+                d.primary.span.start,
+                d.primary.span.end,
+            )
+        });
     }
 
     pub fn into_vec(self) -> Vec<Diagnostic> {

@@ -19,3 +19,7 @@
 //! Neither phase stops at the first mistake. Bad input becomes a diagnostic
 //! (see `plat-diag`) and processing continues, so one run can report many
 //! errors.
+
+pub mod token;
+
+pub use token::{IntSuffix, Keyword, Quote, Token, TokenKind};

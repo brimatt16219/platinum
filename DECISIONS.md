@@ -85,6 +85,18 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 **Choice:** `PT0001`-`PT0099` lexing, `PT0100`-`PT0999` parsing.
 **Why:** lets a code's number say which phase produced it; consistent with the existing `PT0110`.
 
+## D-21: Newline rule amendments: `|` and `->` continue a line; newlines are insignificant in item headers
+**Status:** proposed (M0 step 6). Amends D-17.
+**Problem:** D-17 as written breaks the spec's own examples.
+1. Multi-line variant declarations (`spec/03-types.md`, `examples/shapes.plat`) start continuation lines with `|`: after `| Circle(radius: Float)` the line ends in `)`, so D-17 would end the statement before `| Rect(...)`.
+2. `examples/bank.plat` (`transfer`) puts `-> Result[...]` on its own line after `)`.
+3. Every function with contracts puts clauses and the body brace on their own lines (`examples/bank.plat`, `examples/refund.plat`): `-> Account` NL `ensures ...` NL `{`. After `Account` or after the `ensures` expression, D-17 emits a `Newline`, so the parser sees a terminator inside a function header.
+**Choice:**
+- (a) Lexer: add `|` and `->` to the continuation tokens (a line starting with either continues the previous line).
+- (b) Parser (M1): `Newline` tokens are skipped inside item headers (between `fn` and the body's `{`, between `while`/`for` and the loop body, and before `=` / after `=` in `type` declarations), where a statement cannot end anyway.
+**Alternatives:** make `needs`/`requires`/`ensures`/`invariant`/`{` continuation tokens in the lexer. Rejected for `{`: `foo()` NL `{ ... }` would silently become a trailing-block call, changing meaning. Rejected for the clause keywords as unnecessary once (b) exists, since (b) is needed for `{` anyway.
+**Why:** (a) is a pure lexer fix that the examples require. (b) keeps the lexer rule simple (Go style) while allowing the brace-on-its-own-line layout the examples use, and limits newline tolerance to places where it cannot change meaning.
+
 ## Open questions (to decide during implementation)
 
 - **Q-01 (M6):** stack vs register bytecode.

@@ -46,13 +46,21 @@ impl Span {
         if start <= end {
             Span { file, start, end }
         } else {
-            Span { file, start: end, end: start }
+            Span {
+                file,
+                start: end,
+                end: start,
+            }
         }
     }
 
     /// An empty span marking a single position, such as end of file.
     pub fn point(file: FileId, offset: u32) -> Span {
-        Span { file, start: offset, end: offset }
+        Span {
+            file,
+            start: offset,
+            end: offset,
+        }
     }
 
     /// Number of bytes covered.
@@ -72,7 +80,10 @@ impl Span {
     /// Both spans must be in the same file; if they are not (a compiler bug),
     /// debug builds panic and release builds return `self` unchanged.
     pub fn to(self, other: Span) -> Span {
-        debug_assert_eq!(self.file, other.file, "cannot join spans from different files");
+        debug_assert_eq!(
+            self.file, other.file,
+            "cannot join spans from different files"
+        );
         if self.file != other.file {
             return self;
         }
@@ -116,7 +127,10 @@ mod tests {
         let outer = Span::new(F, 0, 20);
         let inner = Span::new(F, 5, 6);
         assert_eq!(outer.to(inner), outer);
-        assert_eq!(Span::new(F, 0, 5).to(Span::new(F, 3, 9)), Span::new(F, 0, 9));
+        assert_eq!(
+            Span::new(F, 0, 5).to(Span::new(F, 3, 9)),
+            Span::new(F, 0, 9)
+        );
     }
 
     #[test]

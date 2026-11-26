@@ -13,6 +13,9 @@
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    eprintln!("plat {}: no commands yet (M0 in progress)", env!("CARGO_PKG_VERSION"));
+    eprintln!(
+        "plat {}: no commands yet (M0 in progress)",
+        env!("CARGO_PKG_VERSION")
+    );
     ExitCode::from(2)
 }

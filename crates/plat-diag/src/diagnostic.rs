@@ -88,7 +88,10 @@ pub struct Label {
 
 impl Label {
     pub fn new(span: Span, message: impl Into<String>) -> Label {
-        Label { span, message: message.into() }
+        Label {
+            span,
+            message: message.into(),
+        }
     }
 }
 
@@ -125,7 +128,10 @@ pub struct Edit {
 
 impl Edit {
     pub fn new(span: Span, replacement: impl Into<String>) -> Edit {
-        Edit { span, replacement: replacement.into() }
+        Edit {
+            span,
+            replacement: replacement.into(),
+        }
     }
 }
 
@@ -140,7 +146,11 @@ pub struct Fix {
 
 impl Fix {
     pub fn new(title: impl Into<String>, applicability: Applicability, edits: Vec<Edit>) -> Fix {
-        Fix { title: title.into(), applicability, edits }
+        Fix {
+            title: title.into(),
+            applicability,
+            edits,
+        }
     }
 }
 
@@ -159,7 +169,12 @@ pub struct Diagnostic {
 impl Diagnostic {
     /// A diagnostic with the given severity and a primary span with no label
     /// text yet. Most code uses the `error` or `warning` shorthands.
-    pub fn new(severity: Severity, code: Code, message: impl Into<String>, span: Span) -> Diagnostic {
+    pub fn new(
+        severity: Severity,
+        code: Code,
+        message: impl Into<String>,
+        span: Span,
+    ) -> Diagnostic {
         Diagnostic {
             code,
             severity,
@@ -242,8 +257,14 @@ mod tests {
 
         assert_eq!(d.code, Code(3001));
         assert!(d.is_error());
-        assert_eq!(d.primary, Label::new(span(412, 419), "field `balance` requires `self >= 0`"));
-        assert_eq!(d.secondary, vec![Label::new(span(360, 378), "this condition was false")]);
+        assert_eq!(
+            d.primary,
+            Label::new(span(412, 419), "field `balance` requires `self >= 0`")
+        );
+        assert_eq!(
+            d.secondary,
+            vec![Label::new(span(360, 378), "this condition was false")]
+        );
         assert_eq!(d.notes, vec!["balance would be 5 - 5 - 1 = -1".to_string()]);
         assert_eq!(d.fixes, vec![fix]);
         assert_eq!(d.docs(), "plat explain PT3001");
@@ -261,7 +282,10 @@ mod tests {
         assert_eq!(Severity::Error.as_str(), "error");
         assert_eq!(Severity::Warning.as_str(), "warning");
         assert_eq!(Severity::Note.as_str(), "note");
-        assert_eq!(Applicability::MachineApplicable.as_str(), "machine-applicable");
+        assert_eq!(
+            Applicability::MachineApplicable.as_str(),
+            "machine-applicable"
+        );
         assert_eq!(Applicability::MaybeIncorrect.as_str(), "maybe-incorrect");
         assert_eq!(Applicability::HasPlaceholders.as_str(), "has-placeholders");
     }

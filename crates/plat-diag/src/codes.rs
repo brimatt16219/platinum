@@ -82,7 +82,11 @@ pub struct ParseCodeError {
 
 impl fmt::Display for ParseCodeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "`{}` is not a diagnostic code; expected the form PT0001", self.input)
+        write!(
+            f,
+            "`{}` is not a diagnostic code; expected the form PT0001",
+            self.input
+        )
     }
 }
 
@@ -95,7 +99,9 @@ impl FromStr for Code {
     type Err = ParseCodeError;
 
     fn from_str(s: &str) -> Result<Code, ParseCodeError> {
-        let error = || ParseCodeError { input: s.to_string() };
+        let error = || ParseCodeError {
+            input: s.to_string(),
+        };
         let trimmed = s.trim();
         let prefix = trimmed.get(..2).ok_or_else(error)?;
         let digits = trimmed.get(2..).ok_or_else(error)?;
@@ -331,7 +337,9 @@ mod tests {
 
     #[test]
     fn rejects_malformed_codes() {
-        for bad in ["", "PT", "PT1", "PT00001", "XX0001", "PT00a1", "0001", "PT-001", "€T0001"] {
+        for bad in [
+            "", "PT", "PT1", "PT00001", "XX0001", "PT00a1", "0001", "PT-001", "€T0001",
+        ] {
             assert!(bad.parse::<Code>().is_err(), "{bad:?} should not parse");
         }
     }
@@ -348,7 +356,10 @@ mod tests {
         assert_eq!(Code(1).area(), Some("lexing"));
         assert_eq!(Code(99).area(), Some("lexing"));
         assert_eq!(Code(100).area(), Some("parsing"));
-        assert_eq!(Code(2001).area(), Some("effects, capabilities, concurrency"));
+        assert_eq!(
+            Code(2001).area(),
+            Some("effects, capabilities, concurrency")
+        );
         assert_eq!(Code(0).area(), None);
         assert_eq!(Code(5000).area(), None);
     }
@@ -368,7 +379,11 @@ mod tests {
     #[test]
     fn every_code_is_in_a_known_range() {
         for info in REGISTRY {
-            assert!(info.code.area().is_some(), "{} is outside every range", info.code);
+            assert!(
+                info.code.area().is_some(),
+                "{} is outside every range",
+                info.code
+            );
         }
     }
 
@@ -376,7 +391,11 @@ mod tests {
     fn every_entry_is_documented() {
         for info in REGISTRY {
             assert!(!info.title.trim().is_empty(), "{} has no title", info.code);
-            assert!(!info.explanation.trim().is_empty(), "{} has no explanation", info.code);
+            assert!(
+                !info.explanation.trim().is_empty(),
+                "{} has no explanation",
+                info.code
+            );
             assert!(
                 info.explanation.contains("Example"),
                 "{} explanation should include an example",
@@ -389,8 +408,16 @@ mod tests {
     fn explanations_follow_the_writing_style() {
         // CLAUDE.md: no em-dashes in docs. `plat explain` output is docs.
         for info in REGISTRY {
-            assert!(!info.title.contains('\u{2014}'), "{} title has an em-dash", info.code);
-            assert!(!info.explanation.contains('\u{2014}'), "{} explanation has an em-dash", info.code);
+            assert!(
+                !info.title.contains('\u{2014}'),
+                "{} title has an em-dash",
+                info.code
+            );
+            assert!(
+                !info.explanation.contains('\u{2014}'),
+                "{} explanation has an em-dash",
+                info.code
+            );
         }
     }
 
@@ -400,6 +427,9 @@ mod tests {
             assert_eq!(lookup(info.code).map(|i| i.code), Some(info.code));
         }
         assert!(lookup(Code(98)).is_none());
-        assert_eq!(UNTERMINATED_STRING.info().map(|i| i.title), Some("unterminated string literal"));
+        assert_eq!(
+            UNTERMINATED_STRING.info().map(|i| i.title),
+            Some("unterminated string literal")
+        );
     }
 }

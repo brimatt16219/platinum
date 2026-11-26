@@ -7,4 +7,4 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
-# plat-diag is added in step 7, when the lexer starts reporting diagnostics.
+plat-diag.workspace = true
