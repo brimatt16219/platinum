@@ -38,8 +38,7 @@
 //!
 //! ## What is not here yet
 //!
-//! This is M0 step 7. Still to come:
-//! - step 8: trailing `?`/`!` absorbed into identifiers (`empty?`, `sort!`),
+//! As of M0 step 8, still to come:
 //! - step 9: string literals and interpolation (until then `"` is reported
 //!   as an unexpected character),
 //! - step 10: the newline rule (until then newlines are plain whitespace).
@@ -234,21 +233,45 @@ impl<'src> Lexer<'src> {
         c.is_ascii_alphanumeric() || c == '_'
     }
 
+    /// Lexes a lowercase identifier or keyword, including the Ruby-style
+    /// suffix rule from `spec/01-lexical.md` (DECISIONS D-16):
+    ///
+    /// - `?` directly after the name (no space) becomes part of it:
+    ///   `empty?`, `paid?`. By convention these return `Bool`.
+    /// - `!` directly after the name becomes part of it, *unless* the next
+    ///   character is `=`: `sort!` is one name, but `a!=b` is `a != b`.
+    /// - At most one suffix: `x??` is the name `x?` then the operator `?`.
+    /// - Keywords never take a suffix: `self?` is `self` followed by the `?`
+    ///   operator, since a keyword cannot be a name.
+    ///
+    /// The lexer does not decide what `name?` *means*. If `name?` turns out
+    /// not to exist but `name` is a `Result` or `Option`, the name resolver
+    /// (M2) reads it as `(name)?`, error propagation. Keeping that decision
+    /// out of the lexer means the lexer never needs to know what is in scope.
     fn lex_lower_ident(&mut self, start: usize) {
         self.eat_while(Self::is_ident_continue);
-        let text = &self.src[start..self.pos];
+        let base = &self.src[start..self.pos];
 
-        if let Some(kw) = Keyword::lookup(text) {
+        if let Some(kw) = Keyword::lookup(base) {
             self.push(TokenKind::Kw(kw), start);
             return;
         }
-        if is_reserved(text) {
+
+        match (self.peek(), self.peek_second()) {
+            (Some('?'), _) => self.pos += 1,
+            (Some('!'), next) if next != Some('=') => self.pos += 1,
+            _ => {}
+        }
+
+        // Check the base word, so `yield?` is caught too: once `yield` is a
+        // keyword, `yield?` would lex as `yield` then `?`.
+        if is_reserved(base) {
             // Report, but still produce an identifier so parsing can go on.
             let span = self.span_from(start);
             self.report(
                 Diagnostic::error(
                     codes::RESERVED_KEYWORD,
-                    format!("`{text}` is reserved for future use"),
+                    format!("`{base}` is reserved for future use"),
                     span,
                 )
                 .with_primary_label("reserved word used as a name"),
@@ -257,6 +280,8 @@ impl<'src> Lexer<'src> {
         self.push(TokenKind::LowerIdent, start);
     }
 
+    /// Uppercase names (types, constructors) never take a `?`/`!` suffix:
+    /// `Some?` is `Some` followed by the `?` operator.
     fn lex_upper_ident(&mut self, start: usize) {
         self.eat_while(Self::is_ident_continue);
         self.push(TokenKind::UpperIdent, start);

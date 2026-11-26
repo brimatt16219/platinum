@@ -133,7 +133,50 @@ fn reserved_words() {
     insta::assert_snapshot!(dump("let yield = async + decreases"));
 }
 
+#[test]
+fn question_and_bang_suffixes() {
+    // Absorbed: empty? paid? sort! push! a! (next char is a space, not `=`)
+    // Not absorbed: after `)` `]` a literal or whitespace; after keywords and
+    // uppercase names; `!` before `=`; a second suffix.
+    insta::assert_snapshot!(dump(
+        "empty? paid? sort! push!(4) a!=b a! = b x?? x!! foo()? xs[0]? 1? x ? \
+         Some? Foo! self? result? task.await? resp.body? yield?"
+    ));
+}
+
 // --- Targeted behavior ---------------------------------------------------
+
+/// The text of each non-Eof token, for compact assertions.
+fn texts(src: &str) -> Vec<String> {
+    lex_str(src)
+        .tokens
+        .iter()
+        .filter(|t| t.kind != TokenKind::Eof)
+        .map(|t| src[t.span.start as usize..t.span.end as usize].to_string())
+        .collect()
+}
+
+#[test]
+fn suffix_rule_cases() {
+    assert_eq!(texts("empty?"), ["empty?"]);
+    assert_eq!(texts("sort!"), ["sort!"]);
+    assert_eq!(texts("a!=b"), ["a", "!=", "b"]);
+    assert_eq!(texts("a!==b"), ["a", "!=", "=", "b"]);
+    assert_eq!(texts("x??"), ["x?", "?"]);
+    assert_eq!(texts("x?!"), ["x?", "!"]);
+    assert_eq!(texts("x !"), ["x", "!"]);
+    assert_eq!(texts("self?"), ["self", "?"]);
+    assert_eq!(texts("Some?"), ["Some", "?"]);
+    assert_eq!(texts("f()?"), ["f", "(", ")", "?"]);
+    assert_eq!(texts("xs.empty?"), ["xs", ".", "empty?"]);
+}
+
+#[test]
+fn reserved_word_with_suffix_is_still_reported() {
+    let lexed = lex_str("yield?");
+    assert_eq!(lexed.diagnostics.len(), 1);
+    assert_eq!(lexed.tokens[0].kind, TokenKind::LowerIdent);
+}
 
 #[test]
 fn byte_order_mark_is_skipped() {
