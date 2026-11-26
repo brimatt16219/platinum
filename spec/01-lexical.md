@@ -62,6 +62,14 @@ Number literal rules (DECISIONS D-22):
 
 String escapes: `\n \t \r \\ \" \# \u{1F600}`. Interpolation `#{expr}` requires `expr` to implement `Show`.
 
+String literal rules (DECISIONS D-23):
+
+- Only triple-quoted strings span lines. An ordinary `"..."` or raw `r"..."` string that reaches the end of its line is an error (`PT0002`), reported at the opening quote.
+- A `#{` inside an ordinary string must be closed on the same line (`PT0007`). Inside a triple-quoted string an interpolation may span lines.
+- A triple-quoted string ends at the first `"""`. Inside it, `"` and `""` are ordinary text; a `"` directly before the closing `"""` must be escaped as `\"`.
+- Raw strings are `r`, zero or more `#`, then `"`, and end at `"` followed by the same number of `#`: `r#"say "hi""#`. They have no escapes and no interpolation. There is no raw triple-quoted form.
+- `\u{...}` takes 1 to 6 hex digits naming a Unicode scalar value (no surrogates `D800` to `DFFF`, nothing above `10FFFF`); anything else is `PT0004`.
+
 ## Operators and punctuation
 
 ```

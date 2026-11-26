@@ -110,7 +110,7 @@ Format: each decision lists the choice, the alternatives considered, and why. St
 **Why:** each rule removes an ambiguity the spec left open, keeps literals readable, and matches what a reader would guess. Rule 6 avoids a known Rust papercut (`t.0.1` needing a space or parentheses).
 
 ## D-23: String literal details
-**Status:** proposed (M0 step 9). Clarifies `spec/01-lexical.md`, which lists the string forms but not their edge cases.
+**Status:** accepted (2026-11-26, proposed in M0 step 9). Clarifies `spec/01-lexical.md`, which lists the string forms but not their edge cases.
 **Choice:**
 1. Only triple-quoted strings span lines. An ordinary `"..."` or raw `r"..."` string that reaches the end of its line is `PT0002`, reported at the opening quote.
 2. A `#{` inside an ordinary (one-line) string must be closed on the same line (`PT0007`). Inside a triple-quoted string an interpolation may span lines.
