@@ -8,6 +8,27 @@ What to understand at each milestone, and where to read about it. Read the "core
 - Concepts: tokens vs lexemes; spans; recursive descent; operator precedence and Pratt parsing; error recovery (synchronize on `}` and newlines); environments; closures capturing variables.
 - Exercise: before reading the parser code Claude writes, hand-parse `a + b * c |> f` into a tree using the precedence table in `spec/02-grammar.md`.
 
+### Read the M0 code (in this order)
+
+Each file opens with a comment explaining its concept in plain language. Suggested reading order, from the bottom of the dependency graph up:
+
+| File | Concept |
+|---|---|
+| [plat-diag/src/span.rs](crates/plat-diag/src/span.rs) | Spans: half-open byte ranges, why bytes and `u32` |
+| [plat-diag/src/source.rs](crates/plat-diag/src/source.rs) | Line tables, binary search, character columns (D-19) |
+| [plat-diag/src/diagnostic.rs](crates/plat-diag/src/diagnostic.rs) | Diagnostics as data; fixes and applicability |
+| [plat-diag/src/bag.rs](crates/plat-diag/src/bag.rs) | Collect errors and keep going |
+| [plat-diag/src/codes.rs](crates/plat-diag/src/codes.rs) | Stable codes, the registry behind `plat explain` |
+| [plat-diag/src/render/json.rs](crates/plat-diag/src/render/json.rs) | Output structs (DTOs) and serde; the v1 schema |
+| [plat-diag/src/render/human.rs](crates/plat-diag/src/render/human.rs) | Translating to ariadne; byte vs char indexing |
+| [plat-syntax/src/token.rs](crates/plat-syntax/src/token.rs) | Tokens vs lexemes; the one macro (`keywords!`) |
+| [plat-syntax/src/lexer.rs](crates/plat-syntax/src/lexer.rs) | Cursor, maximal munch, error recovery, the newline rule |
+| [plat-syntax/src/lexer/strings.rs](crates/plat-syntax/src/lexer/strings.rs) | String pieces and the interpolation mode stack (D-18) |
+| [plat-cli/src/main.rs](crates/plat-cli/src/main.rs) | clap derive; the CLI contract and exit codes |
+| [plat-cli/tests/ui.rs](crates/plat-cli/tests/ui.rs) | Golden tests and blessing |
+
+Rust concepts you will meet along the way, roughly in order: newtypes and `#[derive]`, `Result` instead of panics, builder methods that take `self`, `impl Trait` arguments, lifetimes on borrowing structs (`JsonLabel<'a>`), `macro_rules!`, closures capturing `&mut`, `let ... else`, let chains (edition 2024), child modules adding `impl` blocks to a parent's type, integration tests in `tests/`, and snapshot testing with `insta`.
+
 ## M2: Type checking
 
 - **Core:** Dunfield and Krishnaswami, "Bidirectional Typing" (survey): https://arxiv.org/pdf/1908.05839.pdf

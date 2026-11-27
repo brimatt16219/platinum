@@ -1,6 +1,6 @@
 # M0 plan: Foundations
 
-Status: approved (2026-11-21). Open choices A to D resolved with the recommended options; see DECISIONS D-17 to D-20.
+Status: **done** (2026-11-26). Open choices A to D resolved with the recommended options (DECISIONS D-17 to D-20); implementation added D-21 to D-23. See `notes/M0-retro.md`.
 
 ## Goal (from ROADMAP.md)
 

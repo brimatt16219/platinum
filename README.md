@@ -48,4 +48,16 @@ pub fn refund(p: Payment, amt: Money) -> Result[Refund, OverLimit | Closed]
 
 ## Status
 
-Design spec v0.1 (November 2026). No implementation yet. Start with `CLAUDE.md`.
+Design spec v0.1 (November 2026). **M0 (foundations) is complete:** the Cargo workspace, diagnostics with JSON and human rendering, the full lexer, and `plat check` / `plat explain`. Next is M1 (parser and tree-walking interpreter); see `ROADMAP.md` and `notes/M0-retro.md`.
+
+```powershell
+cargo test
+```
+
+```powershell
+cargo run -q -p plat-cli -- check examples/refund.plat
+```
+
+```powershell
+cargo run -q -p plat-cli -- explain PT0007
+```
