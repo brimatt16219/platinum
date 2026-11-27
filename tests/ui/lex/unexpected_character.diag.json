@@ -1,0 +1,131 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `$`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 3,
+          "offset": 142
+        },
+        "file": "lex/unexpected_character.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 13,
+          "line": 3,
+          "offset": 141
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected characters `@@`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 16,
+          "line": 4,
+          "offset": 159
+        },
+        "file": "lex/unexpected_character.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 14,
+          "line": 4,
+          "offset": 157
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `“`",
+      "notes": [
+        "this looks like a curly quote; Platinum strings use plain `\"`"
+      ],
+      "primary": {
+        "end": {
+          "col": 10,
+          "line": 5,
+          "offset": 173
+        },
+        "file": "lex/unexpected_character.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 9,
+          "line": 5,
+          "offset": 170
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `”`",
+      "notes": [
+        "this looks like a curly quote; Platinum strings use plain `\"`"
+      ],
+      "primary": {
+        "end": {
+          "col": 13,
+          "line": 5,
+          "offset": 178
+        },
+        "file": "lex/unexpected_character.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 12,
+          "line": 5,
+          "offset": 175
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `é`",
+      "notes": [
+        "names may only use ASCII letters, digits, and `_`; other characters are allowed in strings and comments"
+      ],
+      "primary": {
+        "end": {
+          "col": 9,
+          "line": 6,
+          "offset": 188
+        },
+        "file": "lex/unexpected_character.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 8,
+          "line": 6,
+          "offset": 186
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 5,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

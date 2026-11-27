@@ -1,0 +1,152 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `$`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 12,
+          "line": 4,
+          "offset": 154
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 11,
+          "line": 4,
+          "offset": 153
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "`2` is not a binary digit",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 5,
+          "offset": 169
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "binary literals may only contain `0` and `1`",
+        "start": {
+          "col": 11,
+          "line": 5,
+          "offset": 166
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "invalid escape sequence `\\q`",
+      "notes": [
+        "valid escapes: \\n \\t \\r \\\\ \\\" \\# \\u{1F600}"
+      ],
+      "primary": {
+        "end": {
+          "col": 18,
+          "line": 6,
+          "offset": 187
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "not a valid escape",
+        "start": {
+          "col": 16,
+          "line": 6,
+          "offset": 185
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0006",
+      "docs": "plat explain PT0006",
+      "fixes": [],
+      "message": "unknown suffix `i7` on number literal",
+      "notes": [
+        "valid suffixes: i8 i16 i32 i64 u8 u16 u32 u64, and f for Float"
+      ],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 7,
+          "offset": 209
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "not a valid suffix",
+        "start": {
+          "col": 12,
+          "line": 7,
+          "offset": 207
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0001",
+      "docs": "plat explain PT0001",
+      "fixes": [],
+      "message": "unexpected character `@`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 12,
+          "line": 9,
+          "offset": 239
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "not valid Platinum syntax here",
+        "start": {
+          "col": 11,
+          "line": 9,
+          "offset": 238
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0008",
+      "docs": "plat explain PT0008",
+      "fixes": [],
+      "message": "`yield` is reserved for future use",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 12,
+          "line": 10,
+          "offset": 251
+        },
+        "file": "lex/recovery_many_errors.plat",
+        "label": "reserved word used as a name",
+        "start": {
+          "col": 7,
+          "line": 10,
+          "offset": 246
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 6,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

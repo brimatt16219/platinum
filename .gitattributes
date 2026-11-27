@@ -1,0 +1,11 @@
+# Byte offsets in diagnostics, snapshots, and golden files depend on exact
+# line endings. Without this, Git on Windows (core.autocrlf=true) checks these
+# files out with CRLF, every offset after the first line shifts, and tests that
+# pass on one machine fail on another. Pin them to LF everywhere.
+*.plat       text eol=lf
+*.diag.json  text eol=lf
+*.stdout     text eol=lf
+*.snap       text eol=lf
+*.rs         text eol=lf
+*.md         text eol=lf
+*.toml       text eol=lf

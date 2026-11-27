@@ -1,0 +1,127 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "invalid escape sequence `\\f`",
+      "notes": [
+        "valid escapes: \\n \\t \\r \\\\ \\\" \\# \\u{1F600}"
+      ],
+      "primary": {
+        "end": {
+          "col": 21,
+          "line": 2,
+          "offset": 97
+        },
+        "file": "lex/invalid_escape.plat",
+        "label": "not a valid escape",
+        "start": {
+          "col": 19,
+          "line": 2,
+          "offset": 95
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "a `\\u{...}` escape needs 1 to 6 hex digits",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 18,
+          "line": 3,
+          "offset": 121
+        },
+        "file": "lex/invalid_escape.plat",
+        "label": "invalid Unicode escape",
+        "start": {
+          "col": 14,
+          "line": 3,
+          "offset": 117
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "not a valid Unicode scalar value (surrogates and values above 10FFFF are not allowed)",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 26,
+          "line": 4,
+          "offset": 148
+        },
+        "file": "lex/invalid_escape.plat",
+        "label": "invalid Unicode escape",
+        "start": {
+          "col": 18,
+          "line": 4,
+          "offset": 140
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "not a valid Unicode scalar value (surrogates and values above 10FFFF are not allowed)",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 26,
+          "line": 5,
+          "offset": 175
+        },
+        "file": "lex/invalid_escape.plat",
+        "label": "invalid Unicode escape",
+        "start": {
+          "col": 16,
+          "line": 5,
+          "offset": 165
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0004",
+      "docs": "plat explain PT0004",
+      "fixes": [],
+      "message": "expected `{` after `\\u`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 19,
+          "line": 6,
+          "offset": 195
+        },
+        "file": "lex/invalid_escape.plat",
+        "label": "write Unicode escapes as `\\u{1F600}`",
+        "start": {
+          "col": 17,
+          "line": 6,
+          "offset": 193
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 5,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

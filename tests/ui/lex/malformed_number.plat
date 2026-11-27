@@ -1,0 +1,7 @@
+// PT0005: number literals that break the rules in DECISIONS D-22.
+let a = 0x
+let b = 0b102
+let c = 1_
+let d = 1__0
+let e = 1e5
+let fine = [1_000, 0xFF, 0b1010, 1.50, 2.0e-3f, 1f]

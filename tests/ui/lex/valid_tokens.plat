@@ -1,0 +1,38 @@
+// Every token kind in valid use. Expected: no diagnostics.
+
+/// A doc comment.
+#[derive(Eq, Show)]
+type Money = { cents: Int where self >= 0, ccy: Currency }
+
+type Shape =
+  | Circle(radius: Float)
+  | Rect(w: Float, h: Float)
+
+pub fn transfer(from: Account, amt: Int where self > 0)
+  -> Result[(Account, Account), Closed | Insufficient]
+  needs Gateway, Clock
+  requires from.open?
+  ensures result.ok? => result.unwrap.0.balance >= 0
+{
+  var xs = [1, 2, 3]
+  xs.sort!
+  xs[0] = 42i64 + 0xFFu8 - 0b1010 * 7 / 2 % 3
+  let d = 1.50; let f = 2.0e-3f
+  let r = 1..10; let s = 1..=10
+  let ok = !a && b || c != d && e <= f && g >= h && i < j && k > l && m == n
+  total += 1; total -= 1; total *= 2; total /= 2
+  let doubled = xs |> map { |x| x * 2 }
+  let lambda = |x| x + 1
+  let raw = r#"C:\no\#{escapes} "quoted""#
+  let text = """
+    multi-line #{d}
+    with "quotes"
+    """
+  let msg = "hi #{name}, #{ xs.map { |x| x } }\n"
+  /* block /* nested */ comment */
+  match shape {
+    Circle(r) => 3.14159f * r * r,
+    Rect(w, h) => w * h,
+  }
+  Ok((from, from))?
+}

@@ -1,0 +1,4 @@
+// PT0003: block comments nest, so the outer comment below is still open.
+let x = 1
+/* outer /* inner */
+let y = 2

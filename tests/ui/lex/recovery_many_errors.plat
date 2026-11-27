@@ -1,0 +1,11 @@
+// Error recovery: one run reports every problem, in source order, and the
+// valid code between them is unaffected.
+fn main() needs Console {
+  let a = $1
+  let b = 0b2
+  let c = "bad \q escape"
+  let d = 5i7
+  puts("ok #{a}")
+  let e = @
+  let yield = 3
+}

@@ -1,0 +1,108 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0006",
+      "docs": "plat explain PT0006",
+      "fixes": [],
+      "message": "unknown suffix `i7` on number literal",
+      "notes": [
+        "valid suffixes: i8 i16 i32 i64 u8 u16 u32 u64, and f for Float"
+      ],
+      "primary": {
+        "end": {
+          "col": 13,
+          "line": 2,
+          "offset": 91
+        },
+        "file": "lex/unknown_number_suffix.plat",
+        "label": "not a valid suffix",
+        "start": {
+          "col": 11,
+          "line": 2,
+          "offset": 89
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0006",
+      "docs": "plat explain PT0006",
+      "fixes": [],
+      "message": "integer suffix `i32` on a decimal literal",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 15,
+          "line": 3,
+          "offset": 106
+        },
+        "file": "lex/unknown_number_suffix.plat",
+        "label": "sized integer suffixes only apply to whole numbers",
+        "start": {
+          "col": 12,
+          "line": 3,
+          "offset": 103
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0006",
+      "docs": "plat explain PT0006",
+      "fixes": [],
+      "message": "unknown suffix `abc` on number literal",
+      "notes": [
+        "valid suffixes: i8 i16 i32 i64 u8 u16 u32 u64, and f for Float"
+      ],
+      "primary": {
+        "end": {
+          "col": 13,
+          "line": 4,
+          "offset": 119
+        },
+        "file": "lex/unknown_number_suffix.plat",
+        "label": "not a valid suffix",
+        "start": {
+          "col": 10,
+          "line": 4,
+          "offset": 116
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0006",
+      "docs": "plat explain PT0006",
+      "fixes": [],
+      "message": "unknown suffix `f` on number literal",
+      "notes": [
+        "valid suffixes: i8 i16 i32 i64 u8 u16 u32 u64, and f for Float"
+      ],
+      "primary": {
+        "end": {
+          "col": 13,
+          "line": 5,
+          "offset": 132
+        },
+        "file": "lex/unknown_number_suffix.plat",
+        "label": "not a valid suffix",
+        "start": {
+          "col": 12,
+          "line": 5,
+          "offset": 131
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 4,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

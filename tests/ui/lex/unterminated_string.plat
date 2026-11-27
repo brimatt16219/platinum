@@ -1,0 +1,5 @@
+// PT0002: strings that are never closed. Ordinary and raw strings must close
+// on their own line, so the next line still lexes normally.
+puts("hello)
+let raw = r#"no closing hash"
+let after = 1

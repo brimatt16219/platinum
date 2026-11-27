@@ -1,0 +1,7 @@
+// PT0004: escapes that are not valid. Each string still lexes as one token.
+let path = "C:\new\folder"
+let empty = "\u{}"
+let surrogate = "\u{D800}"
+let too_big = "\u{110000}"
+let no_brace = "\u41"
+let fine = "\n \t \r \\ \" \# \u{1F600}"

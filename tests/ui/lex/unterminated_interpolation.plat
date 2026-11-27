@@ -1,0 +1,5 @@
+// PT0007: an interpolation that is never closed. The first case is the typo
+// from `plat explain PT0007`: it must produce exactly one error.
+puts("total: #{n")
+let s = "a #{x
+let after = 1

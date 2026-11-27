@@ -1,0 +1,102 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0008",
+      "docs": "plat explain PT0008",
+      "fixes": [],
+      "message": "`yield` is reserved for future use",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 10,
+          "line": 3,
+          "offset": 109
+        },
+        "file": "lex/reserved_keyword.plat",
+        "label": "reserved word used as a name",
+        "start": {
+          "col": 5,
+          "line": 3,
+          "offset": 104
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0008",
+      "docs": "plat explain PT0008",
+      "fixes": [],
+      "message": "`async` is reserved for future use",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 9,
+          "line": 4,
+          "offset": 122
+        },
+        "file": "lex/reserved_keyword.plat",
+        "label": "reserved word used as a name",
+        "start": {
+          "col": 4,
+          "line": 4,
+          "offset": 117
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0008",
+      "docs": "plat explain PT0008",
+      "fixes": [],
+      "message": "`decreases` is reserved for future use",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 20,
+          "line": 5,
+          "offset": 147
+        },
+        "file": "lex/reserved_keyword.plat",
+        "label": "reserved word used as a name",
+        "start": {
+          "col": 10,
+          "line": 5,
+          "offset": 137
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0008",
+      "docs": "plat explain PT0008",
+      "fixes": [],
+      "message": "`macro` is reserved for future use",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 29,
+          "line": 5,
+          "offset": 156
+        },
+        "file": "lex/reserved_keyword.plat",
+        "label": "reserved word used as a name",
+        "start": {
+          "col": 23,
+          "line": 5,
+          "offset": 150
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 4,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

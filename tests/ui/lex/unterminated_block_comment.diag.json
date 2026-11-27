@@ -1,0 +1,33 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0003",
+      "docs": "plat explain PT0003",
+      "fixes": [],
+      "message": "unterminated block comment",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 3,
+          "line": 3,
+          "offset": 86
+        },
+        "file": "lex/unterminated_block_comment.plat",
+        "label": "this comment is never closed",
+        "start": {
+          "col": 1,
+          "line": 3,
+          "offset": 84
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 1,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

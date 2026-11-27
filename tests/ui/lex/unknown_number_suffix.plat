@@ -1,0 +1,6 @@
+// PT0006: suffixes that are not i8..u64 or f, or that do not fit the literal.
+let a = 42i7
+let b = 1.5i32
+let c = 7abc
+let d = 0b1f
+let fine = [42i8, 255u8, 0xFFu8, 1.5f]

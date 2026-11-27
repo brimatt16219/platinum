@@ -1,0 +1,35 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0002",
+      "docs": "plat explain PT0002",
+      "fixes": [],
+      "message": "unterminated string literal",
+      "notes": [
+        "a triple-quoted string ends at the next `\"\"\"`"
+      ],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 3,
+          "offset": 87
+        },
+        "file": "lex/unterminated_triple_string.plat",
+        "label": "this string is never closed",
+        "start": {
+          "col": 11,
+          "line": 3,
+          "offset": 84
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 1,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

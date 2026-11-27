@@ -1,0 +1,60 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0002",
+      "docs": "plat explain PT0002",
+      "fixes": [],
+      "message": "unterminated string literal",
+      "notes": [
+        "strings must end on the line they start on; use \"\"\" ... \"\"\" for text that spans lines"
+      ],
+      "primary": {
+        "end": {
+          "col": 7,
+          "line": 3,
+          "offset": 145
+        },
+        "file": "lex/unterminated_string.plat",
+        "label": "this string is never closed",
+        "start": {
+          "col": 6,
+          "line": 3,
+          "offset": 144
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0002",
+      "docs": "plat explain PT0002",
+      "fixes": [],
+      "message": "unterminated raw string literal",
+      "notes": [
+        "this raw string must end with `\"#` on the same line"
+      ],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 4,
+          "offset": 165
+        },
+        "file": "lex/unterminated_string.plat",
+        "label": "this raw string is never closed",
+        "start": {
+          "col": 11,
+          "line": 4,
+          "offset": 162
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 2,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

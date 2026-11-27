@@ -1,0 +1,127 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "no digits after `0x`",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 11,
+          "line": 2,
+          "offset": 77
+        },
+        "file": "lex/malformed_number.plat",
+        "label": "expected at least one digit here",
+        "start": {
+          "col": 9,
+          "line": 2,
+          "offset": 75
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "`2` is not a binary digit",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 3,
+          "offset": 91
+        },
+        "file": "lex/malformed_number.plat",
+        "label": "binary literals may only contain `0` and `1`",
+        "start": {
+          "col": 9,
+          "line": 3,
+          "offset": 86
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "misplaced `_` in number literal",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 11,
+          "line": 4,
+          "offset": 102
+        },
+        "file": "lex/malformed_number.plat",
+        "label": "`_` must sit between two digits",
+        "start": {
+          "col": 10,
+          "line": 4,
+          "offset": 101
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "misplaced `_` in number literal",
+      "notes": [],
+      "primary": {
+        "end": {
+          "col": 11,
+          "line": 5,
+          "offset": 113
+        },
+        "file": "lex/malformed_number.plat",
+        "label": "`_` must sit between two digits",
+        "start": {
+          "col": 10,
+          "line": 5,
+          "offset": 112
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0005",
+      "docs": "plat explain PT0005",
+      "fixes": [],
+      "message": "an exponent is only allowed on a Float literal",
+      "notes": [
+        "Decimal literals are exact and written out in full, such as `1000.0`"
+      ],
+      "primary": {
+        "end": {
+          "col": 12,
+          "line": 6,
+          "offset": 127
+        },
+        "file": "lex/malformed_number.plat",
+        "label": "add an `f` suffix to make this a Float",
+        "start": {
+          "col": 9,
+          "line": 6,
+          "offset": 124
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 5,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

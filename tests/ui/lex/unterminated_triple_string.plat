@@ -1,0 +1,5 @@
+// PT0002: a triple-quoted string runs to the end of the file.
+let ok = 1
+let doc = """
+  this text
+  never ends

@@ -1,0 +1,6 @@
+// PT0008: words reserved for future keywords cannot be names, with or
+// without a `?`/`!` suffix.
+let yield = 1
+fn async() {}
+let ok = decreases? + macro!
+let unsafe_ok = 2

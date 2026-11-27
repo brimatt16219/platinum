@@ -1,0 +1,60 @@
+{
+  "diagnostics": [
+    {
+      "code": "PT0007",
+      "docs": "plat explain PT0007",
+      "fixes": [],
+      "message": "unterminated string interpolation",
+      "notes": [
+        "close the interpolation with `}`; to write a literal `#{`, escape it as `\\#{`"
+      ],
+      "primary": {
+        "end": {
+          "col": 16,
+          "line": 3,
+          "offset": 158
+        },
+        "file": "lex/unterminated_interpolation.plat",
+        "label": "this `#{` is never closed; the string ends before it is closed",
+        "start": {
+          "col": 14,
+          "line": 3,
+          "offset": 156
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    },
+    {
+      "code": "PT0007",
+      "docs": "plat explain PT0007",
+      "fixes": [],
+      "message": "unterminated string interpolation",
+      "notes": [
+        "close the interpolation with `}`; to write a literal `#{`, escape it as `\\#{`"
+      ],
+      "primary": {
+        "end": {
+          "col": 14,
+          "line": 4,
+          "offset": 175
+        },
+        "file": "lex/unterminated_interpolation.plat",
+        "label": "this `#{` is never closed; the line ends before it is closed",
+        "start": {
+          "col": 12,
+          "line": 4,
+          "offset": 173
+        }
+      },
+      "secondary": [],
+      "severity": "error"
+    }
+  ],
+  "schema": "platinum.diagnostics/v1",
+  "summary": {
+    "errors": 2,
+    "warnings": 0
+  },
+  "tool": "plat check"
+}

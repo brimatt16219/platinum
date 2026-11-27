@@ -1,0 +1,6 @@
+// PT0001: characters that cannot start any token. Runs of junk are one
+// error; curly quotes and non-ASCII letters get a hint.
+let price = $5
+let pair = a @@ b
+let s = “hi”
+let café = 1
