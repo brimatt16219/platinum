@@ -1,0 +1,37 @@
+---
+source: crates/plat-cli/tests/cli.rs
+assertion_line: 100
+expression: out.stderr
+---
+[PT0001] Error: unexpected character `$`
+   ╭─[ lex_errors.plat:1:13 ]
+   │
+ 1 │ let price = $5
+   │             ┬  
+   │             ╰── not valid Platinum syntax here
+   │ 
+   │ Note: for more information, run `plat explain PT0001`
+───╯
+
+[PT0007] Error: unterminated string interpolation
+   ╭─[ lex_errors.plat:2:14 ]
+   │
+ 2 │ puts("total: #{n")
+   │              ─┬  
+   │               ╰── this `#{` is never closed; the string ends before it is closed
+   │ 
+   │ Note 1: close the interpolation with `}`; to write a literal `#{`, escape it as `\#{`
+   │ 
+   │ Note 2: for more information, run `plat explain PT0007`
+───╯
+
+[PT0005] Error: `2` is not a binary digit
+   ╭─[ lex_errors.plat:3:9 ]
+   │
+ 3 │ let x = 0b102
+   │         ──┬──  
+   │           ╰──── binary literals may only contain `0` and `1`
+   │ 
+   │ Note: for more information, run `plat explain PT0005`
+───╯
+plat check: 3 errors, 0 warnings in 1 file

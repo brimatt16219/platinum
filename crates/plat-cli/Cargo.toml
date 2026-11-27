@@ -12,4 +12,10 @@ name = "plat"
 path = "src/main.rs"
 
 [dependencies]
-# plat-diag and plat-syntax are added in step 11, with the real subcommands.
+plat-diag.workspace = true
+plat-syntax.workspace = true
+clap.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+insta.workspace = true

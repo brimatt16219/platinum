@@ -1,0 +1,5 @@
+// Lexically valid: `plat check` reports no problems.
+fn main() needs Console {
+  let total = [1, 2, 3].sum
+  puts("total: #{total}")
+}

@@ -96,6 +96,26 @@ Positions: `line` and `col` are 1-based, `col` counts Unicode scalar values (cha
 
 `applicability` values (borrowed from rustc): `machine-applicable` (safe to apply automatically), `maybe-incorrect` (plausible, needs review), `has-placeholders` (contains `<...>` the agent or human must fill).
 
+Implementation notes (M0):
+
+- Human output goes to stderr; in JSON mode stdout carries the one document and stderr stays empty.
+- `summary` currently carries `errors` and `warnings`; `proven`, `refuted`, and `unknown` are added when `plat prove` exists (M4). The `inferred` object arrives with effect inference (M3). Consumers must ignore fields they do not know.
+- Problems that leave no source to point at (unreadable file, unknown diagnostic code, bad arguments) are usage errors: a message on stderr and exit code `2`, not a diagnostic.
+
+## `plat explain --json`
+
+```json
+{
+  "schema": "platinum.explain/v1",
+  "code": "PT0005",
+  "title": "malformed number literal",
+  "area": "lexing",
+  "explanation": "A number literal is not well formed. ..."
+}
+```
+
+`code` is always in canonical form (`pt0005` on the command line is accepted and normalized). `area` is the range name from the code table above (`null` for a code outside every range). The MCP `explain` tool returns the same object.
+
 ## MCP server (`plat mcp`)
 
 Exposes the compiler directly to agents over the Model Context Protocol (stdio transport). Tools:
